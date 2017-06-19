@@ -1,0 +1,122 @@
+<script type="text/javascript">
+			$(function(){
+				
+								//邮箱自动补全
+				$('#email').autoMail({
+					emails:['qq.com','163.com','126.com','sina.com','sohu.com','yahoo.cn']
+				});
+				
+				var slider = new SliderUnlock("#slider", {
+				}, function() {});
+				
+				slider.init();
+				
+				var wait=60;  
+				function time(o) {  
+		        if (wait == 0) {  
+		            o.removeAttribute("disabled");            
+		            o.value="发送验证链接";  
+		            wait = 60;  
+		        } else {  
+		            o.setAttribute("disabled", true); 
+		             
+		            o.value="重新发送(" + wait + ")";  
+		            wait--;  
+		            setTimeout(function() {  
+		                time(o);  
+		            },  
+		            1000);  
+		        }  
+			    }  
+		/* 		// 发送邮件
+				$("#sendEmail").click(function() {
+		
+					Dialogx.show({
+						_url : 'dialog_email.html',
+						_title : '验证用户名'
+					});
+				}); */
+				//点击免费获取邮箱验证码:1.先判断是否存在一个合法的邮箱. 
+			//定义一个发送Ajax的方法
+			function ajaxReturnBoolean(data,url){
+				var res = false;
+				$.ajax({
+					async : false,
+					cache : false,
+					url : url,
+					success: function(data){
+						res = data;
+					},
+					type:"POST",
+					data : data
+				});
+				return res;
+			}	
+				
+			$("[id=btn]").click(function(){
+			var email = $("[id=email]").val();
+			var aCode = $("[name=aCode]").val();
+			if(email==""||email.indexOf(' ')!=-1){
+			$("[name=emailValidate]").text("邮箱不能为空!"); 
+			$("[name=emailValidate]").css("color","red");
+			$("[name=email]").focus();
+			/*alert(123);*/
+			}else if(!(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(email))){
+				$("[name=emailValidate]").text("邮箱不合法"); 
+				$("[name=emailValidate]").css("color","red");
+				$("[name=email]").focus();
+			}else{//邮箱正确之后才发送邮件,还需要判断邮箱是否被别人使用过
+				var data =  {"email":email}
+				url = "${applicationScope.url}/enterprise/validateEmaliIsUseful";
+				if(ajaxReturnBoolean(data,url)=='true'){//说明邮箱可以使用,未被注册过!
+					$("[name=emailValidate]").text("说明邮箱可以使用,未被注册过!");
+					var dataForSendEmail = {"email":email,"aCode":aCode};
+					var urlForSendEmail = "${applicationScope.url}/commonController/sendAEmail";
+					var sendOk = false;
+					sendOk = ajaxReturnBoolean(dataForSendEmail, urlForSendEmail);
+					if(sendOk == 'true'){
+						$("[name=emailValidate]").html("邮件已发送成功,<a href='https://mail.qq.com/cgi-bin/loginpage' target='_blank'>请查看</a>"); 
+						$("[name=emailValidate]").css("color","green");
+						time(this);//下来才发送邮件
+					}
+					else{
+						$("[name=emailValidate]").text("邮箱发送失败,请稍后重试"); 
+						$("[name=emailValidate]").css("color","red");
+					}
+				}else{
+					$("[name=emailValidate]").text("邮箱已被使用"); 
+					$("[name=emailValidate]").css("color","red");
+					$("[name=email]").focus();
+				}
+				
+			}
+			});
+			//当下一部按钮点击后,验证是否用户已经点击了邮件的超链接
+			$("#sendEmail").click(function(){
+				//在这里直接写${applicationScope.emailCode}是会使整个js脚本都会失效
+				var aCode = $("[name=aCode]").val();
+				//alert(aCode);
+				var data = {"aCode":aCode};
+				var url = "${applicationScope.url}/commonController/validateEmailCode"
+				var emailCodeOk = ajaxReturnBoolean(data, url);
+				//alert(emailCodeOk);
+				if(emailCodeOk == 'true'&&$("[id=labelTip]").text()=="验证成功！"){
+				
+				}else{
+					alert("您的操作不完善,无法进行下一步!")
+					return false;
+				}
+			});
+			
+				$(":checkbox").click(function(){
+					//alert($(":checkbox").get(0).checked);
+					if($(":checkbox").get(0).checked==true){
+						$("#sendEmail").removeAttr("disabled");
+					}else{
+						$("#sendEmail").attr("disabled","disabled");
+					}
+					
+				});
+			});
+		
+		</script>

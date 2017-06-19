@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lanqiao.pay.mapper.UserMapper">
+	<resultMap type="User" id="getUsers">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="email" column="email" />
+		<result property="loginPassword" column="login_password" />
+		<result property="call" column="phone" />
+		<result property="cardId" column="card_id" />
+		<result property="registration" column="registration" />
+		<result	 property="balance" column="balance"/>
+		<result property="state" column="state" />
+		<result property="balance" column="balance"/>
+		<result property="deleteState" column="delete_state"/>
+		<!-- 密保卡 -->
+		<association property="secretId" javaType="org.lanqiao.pay.base.entity.Secret">
+			<id property="id" column="id" />
+			<result property="payPassword" column="pay_password" />
+			<result property="securityQuestion" column="secret_question" />
+			<result property="classifiedAnswer" column="classified_answer" />
+		</association>
+	</resultMap>
+	
+	<!-- 重置密码 陈楚 -->
+	<update id="resetPassword">
+		update user set login_password=#{repassword} where id=#{id}
+	</update>
+	<!-- 注销用户 陈楚-->
+	<update id="deleteState" parameterType="int">
+		update user set delete_state=1 where id=#{id}
+	</update>
+	<!-- 修改用户个人状态为正常 陈楚-->
+	<update id="backToState" parameterType="int">
+		update user set state=0 where id=#{id}
+	</update>
+	<!-- 修改用户个人状态 改为禁用 陈楚-->
+	<update id="updateState" parameterType="int">
+		update user set state=1 where id=#{id}
+	</update>
+	<!-- 获取用户全部信息 -->
+	<select id="getAllUsers" resultMap="getUsers">
+		select
+		id,name,email,login_password,card_id,registration,state from user
+	</select>
+	<!-- 获取有条件查找的用户数量 陈楚-->
+	<select id="getuserByqualified" parameterType="String"
+		resultType="int">
+		select count(id) from user
+		where name like "%"#{keyword}"%"
+	</select>
+	<!-- 通过分页获取全部用户信息 陈楚-->
+	<select id="getPage" parameterType="org.lanqiao.pay.base.bean.UserCreteria"
+		resultMap="getUsers">
+		select
+		id,name,email,login_password,phone,card_id,registration,state,delete_state from user
+		where name like '%${keyword}%'
+		order by ${orderby}
+		limit
+		#{from},#{pageSize}
+	</select>
+	<!-- 通过名字获取信息 陈楚-->
+	<select id="getUserByName" parameterType="String" resultMap="getUsers">
+		select id,name,state,delete_state from user where name=#{name}
+	</select>
+
+	<resultMap type="User" id="getUsersAndSecret">
+		<id property="id" column="id" />
+		<association property="secretId"
+			select="org.lanqiao.pay.mapper.SecretMapper.getSecret" column="secret_id"></association>
+	</resultMap>
+
+	<!-- 通过名字和密码获取信息 陈楚-->
+	<select id="getUserByNameAndPassword" parameterType="String"
+		resultMap="getUsersAndSecret">
+		select * from user where name=#{name} and login_password
+		=#{password}
+	</select>
+	<!-- 通过邮箱查询用户是否存在（邮箱注册） 刘宣-->
+	<select id="getUserByUserName" parameterType="String" resultMap="getUsers">
+		select name,email,login_password,card_id,registration from user where
+		email=#{email}
+	</select>
+	<!-- 注册的时候查询身份证是否可用(身份证注册) -->
+	<select id="regCardId" resultType="User" parameterType="User">
+		select
+		card_id from user where card_id=#{cardId}
+	</select>
+
+	
+	<!-- 通过邮箱修改登录密码 王婷 -->
+	<update id="updateUserbyEmail" parameterType="org.lanqiao.pay.base.entity.User">
+		update user set
+		name=#{name},email=#{email},login_Password=#{loginPassword},card_id=#{cardId},registration=#{registration}
+		where id = #{id}
+	</update>
+	<!-- 通过邮箱 查找用户 王婷 -->
+	<select id="getUserByEmail1" parameterType="String" resultMap="getUsers">
+		select id, name,email,login_password,card_id,registration from user
+		where email=#{email}
+	</select>
+	<select id="isTrueOrFalsePhone" parameterType="String" resultType="org.lanqiao.pay.base.entity.User">
+	   select id,name,email from user where phone = #{call}
+	</select>
+	<update id="updateUser">
+		update user set email=#{email} where secret_id =
+		#{id}
+	</update>
+	<!-- 通过id修改用户姓名 -->
+	<update id="updateUserName" parameterType="org.lanqiao.pay.base.entity.User">
+		update user set
+		name=#{name},email=#{email},login_Password=#{loginPassword},card_id=#{cardId},registration=#{registration},sufface=#{sufface}
+		where id = #{id}
+	</update>
+	<!-- 通过ID获取用户 -->
+	<select id="getUser" parameterType="int" resultMap="getUsersAndSecret">
+		select * from user where id = #{id}
+	</select>
+	<update id="update" parameterType="org.lanqiao.pay.base.entity.User">
+		update user set
+		name=#{name},email=#{email},login_Password=#{loginPassword},card_id=#{cardId},registration=#{registration}
+		where id = #{id}
+	</update>
+	<!-- 用户注册添加用户 -->
+	<insert id="updateUserByReq" parameterType="User">
+		<!-- 获取自增的主键 -->
+		<selectKey keyProperty="id" order="AFTER" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+		insert into user(name,email,login_password,secret_id,card_id,registration,state,balance,delete_state)
+		values(#{name},#{email},#{loginPassword},#{secretId.id},#{cardId},#{registration},0,0,0)
+	</insert>
+
+	<select id="getUserById" parameterType="int" resultType="User">
+		select *
+		from user where id = #{id}
+	</select>
+	<!-- 更新用户的余额 -->
+	<update id="updateUserBalanceOne" parameterType="User">
+		update user set
+		balance = #{balance} where id = #{id}
+	</update>
+
+	<select id="getSecretId" parameterType="Integer" resultType="Integer">
+		select secret_id from user where id=#{id}
+	</select>
+
+	<!-- 李明 充值加钱 -->
+	<update id="chongZhiin" parameterType="User">
+		update user set
+		balance=#{balance} where id=#{id}
+	</update>
+	<!-- 级联查询 通过email查询user表中secret_id -->
+	<resultMap type="User" id="getSecretMap">
+		<id property="id" column="id" />
+		<!-- 一对一查询 -->
+		<association property="secretId"
+			select="org.lanqiao.pay.mapper.SecretMapper.getSecret" column="secret_id"></association>
+	</resultMap>
+	<select id="getUserByEmail" parameterType="String" resultMap="getSecretMap">
+		select * from user where email = #{email}
+	</select>
+	<!-- t通过注册信息 查询用户 刘江 -->
+	<select id="getUsersByTime" resultType="int" parameterType="TimeBean">
+		 select count(*)  from user where registration between
+		#{beginTime} and #{endTime}
+	</select>
+	<!-- t通过注册信息 查询用户 刘江 -->
+	<select id="getUsersNumber" resultType="int" >
+		 select count(*)  from user
+	</select>
+	
+	<!-- 通过user的name查询user的id 王向宇 -->
+	<select id="getUserIdByName" parameterType="String" resultType="Integer">
+		select id from user where name=#{name}
+	</select>
+	<!-- 通过user的邮箱查询user的id 王向宇 -->
+	<select id="getUserIdByEmail" parameterType="String" resultType="Integer">
+		select id from user where email=#{email}
+	</select>
+	<!-- 李明   所有充值提现记录-->
+	<resultMap type="Recharge_withdrawal" id="getRecharge_withdrawalid">
+	    <id property="id" column="id"/>
+	   <!--  <result property="user" column="user_id" />
+		<result property="enterprise" column="enterprise_id"/>
+		<result property="bankCard" column="bankcard_id"/>  -->
+		<result property="money" column="money"/>
+		<result property="time" column="time"/>
+		<result property="operation" column="operation"/>
+		<result property="state" column="state"/>
+		<result property="transaction_name" column="transaction_name"/>
+		<result property="transaction_describe" column="transaction_describe"/>
+	</resultMap>
+	<select id="getRecharge_withdrawal" parameterType="Integer" resultMap="getRecharge_withdrawalid">
+	   select id,money,time,operation,state,transaction_name,transaction_describe from recharge_withdrawal where user_id=#{user_id} order by time desc limit 6   
+	</select>
+	
+	<!--  李明    获取转账记录-->
+	 <select id="getTransfer" parameterType="Integer" resultType="Transfer">
+	   select * from transfer where from_user_id=#{from_user_id} order by time desc limit 4
+	</select>
+	
+	<!-- 李明   所有充值提现记录-->
+	<resultMap type="Recharge_withdrawal" id="getRecharge_withdrawalallid">
+	    <id property="id" column="id"/>
+		<!-- <result property="user" column="user_id" /> 
+		<result property="enterprise" column="enterprise_id"/>
+		<result property="bankCard" column="bankcard_id"/>  -->
+		<result property="money" column="money"/>
+		<result property="time" column="time"/>
+		<result property="operation" column="operation"/>
+		<result property="state" column="state"/>
+		<result property="transaction_name" column="transaction_name"/>
+		<result property="transaction_describe" column="transaction_describe"/>
+	</resultMap>
+	<select id="getRecharge_withdrawalAll" parameterType="Integer" resultMap="getRecharge_withdrawalallid">
+	   select id,money,time,operation,state,transaction_name,transaction_describe from recharge_withdrawal where user_id=#{user_id} order by time desc
+	</select>
+	
+	<!--  李明    获取所有转账记录-->
+	<select id="getTransferAll" parameterType="Integer" resultType="Transfer">
+	   select * from transfer where from_user_id=#{from_user_id} order by time desc
+	</select>
+    <select id="getUserByPhone" parameterType="String" resultType="User">
+       select * from user where phone = #{phone}
+    </select>
+</mapper>

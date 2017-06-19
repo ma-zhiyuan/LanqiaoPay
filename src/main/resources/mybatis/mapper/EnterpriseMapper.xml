@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lanqiao.pay.mapper.EnterpriseMapper">
+	<resultMap type="Enterprise" id="enterpriseInfoMap">
+		<id property="id" column="id"/>
+		<result property="enterpriseName" column="enterprise_name"/>
+		<result property="licenseType" column="license_type"/>
+		<result property="enterpriseName" column="enterprise_name"/>
+		<result property="organizationCodeCertificate" column="organization_code_certificate"/>
+		<result property="businessLicense" column="business_license"/>
+		<result property="licenseRegistrationNumber" column="license_registration_number"/>
+		<result property="address" column="address"/>
+		<result property="businessScope" column="business_scope"/>
+		<result property="businessTerm" column="business_term"/>
+		<result property="organizationCodeNumber" column="organization_code_number"/>
+		<association property="enterpriseUnit" column="enterprise_unit_id" select="org.lanqiao.pay.mapper.EnterpriseUnitMapper.getEnterpriseUnitById"></association>
+		<association property="legalRepresentative" column="legal_representative_id" select="org.lanqiao.pay.mapper.LegalRepresentativeMapper.getLegalRepresentativeById"></association>
+		<collection property="bankcards" column="id" select="org.lanqiao.pay.mapper.BankCardMapper.getBankCardsByEnterpriseId"></collection>
+	</resultMap>
+	<select id="verifyEnterpriseNameOnly" parameterType="String" resultType="int">
+		select count(*) from enterprise where enterprise_name=#{name}
+	</select>
+	<!-- 根据企业id查询含企业名称和id -->
+	<select id="selectEnterpriseIDandName" parameterType="int" resultType="Enterprise">
+		SELECT * FROM enterprise WHERE id = #{id}
+	</select>
+	
+
+	<!-- 查询企业的基本信息带级联 -->
+	<select id="getEnterpriseById" parameterType="int" resultMap="enterpriseDetailMap">
+		SELECT* FROM enterprise WHERE id =#{id}
+	</select>
+	<resultMap type="Enterprise" id="enterpriseDetailMap" extends="enterpriseInfoMap">
+		<association property="enterpriseUnit" column="enterprise_unit_id" 
+		select="org.lanqiao.pay.mapper.EnterpriseUnitMapper.getEnterpriseUnitById"></association>
+		<association property="legalRepresentative" column="legal_representative_id"
+		select="org.lanqiao.pay.mapper.LegalRepresentativeMapper.getLegalRepresentativeById"></association>
+	</resultMap>
+	<select id="verifyIDCardOnly" parameterType="String" resultType="int">
+		select count(*) from legal_representative where certificate_number=#{legalPersonIDCard} 
+	</select>
+	<select id="verifyPhone" parameterType="String" resultType="int">
+		select count(*) from enterprise_user where tell=#{phoneNum}
+	</select>
+	<select id="verifyName" parameterType="String" resultType="int"> </select>
+	
+	<insert id="addEnterprise" keyProperty="id" useGeneratedKeys="true" parameterType="Enterprise">
+		INSERT INTO enterprise(id,enterprise_name,license_type,organization_code_certificate,business_license
+		,license_registration_number,address,business_scope,business_term,organization_code_number,
+		enterprise_unit_id,legal_representative_id)
+		VALUES(#{id},#{enterpriseName},#{licenseType},#{organizationCodeCertificate,jdbcType=VARCHAR},
+		#{businessLicense,jdbcType=VARCHAR},#{licenseRegistrationNumber,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},
+		#{businessScope,jdbcType=VARCHAR},#{businessTerm},#{organizationCodeNumber,jdbcType=VARCHAR}
+		,#{enterpriseUnit.id},#{legalRepresentative.id})
+	</insert>
+	<!-- 通过企业姓名查询企业id   王向宇 -->
+	<select id="getIdByName" parameterType="String" resultType="Integer">
+		select id from enterprise where enterprise_name=#{name}
+	</select>
+</mapper>

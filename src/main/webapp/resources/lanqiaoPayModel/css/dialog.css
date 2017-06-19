@@ -1,0 +1,44 @@
+/* Copyright © 2016 lanqiao.org. All rights reserved. Author:zbq 2016-09-18 */
+/* Dialog Style */
+
+/*--------------------------- 对话框样式 ---------------------------*/
+
+/* 对话框基本样式 */
+.loading { position: fixed; left:0; top:0; }
+.win-loading{ position: fixed; left:0; top:0; z-index: 1000; }
+.win-overlay{ z-index: 999; }
+.dlg-loading, .dlg-overlay, .dlg-submit-tip{ position: absolute; left:0; top:0; z-index:1002; }
+.dlg-overlay{background-color: #999;}
+.dialog-box{ position: fixed; left:320px; top:80px; z-index: 1001; opacity: 0; }
+.dialog-wrap{ border: 3px solid #f0a901; background-color: #fff; box-shadow: 0 1px 20px rgba(0 ,0 ,0, .3); }
+.dialog-hd{ position: relative; height: 40px; color:#fefefe; border-bottom: 1px solid #ccc;background-color: #f0a901; }
+.dialog-hd .title{ padding-left: 18px; line-height: 40px; font-size: 16px; }
+.dialog-hd .close-dlg{ position: absolute; right: 8px; top:10px; font-size: 20px; line-height: 20px; padding: 0 2px; color:#fefefe; }
+.dialog-hd .close-dlg:hover{ color:#eee; }
+.dialog-bd{ position: relative; padding: 30px 54px 34px; }
+
+/* 对话框下表单样式 */
+.dialog-box .form-bd{ width:406px;padding: 10px 22px 10px 10px; font-size: 13px; }
+.dialog-box .form-bd .ipt{ width: 220px; height: 24px; line-height: 24px; padding: 2px 4px; font-size: 12px; }
+.dialog-box .form-bd .sel{ height:30px; line-height: 30px; font-size: 12px; }
+.dialog-box .form-bd .unit{ line-height: 20px; }
+.dialog-box .form-item{ padding-bottom: 20px; }
+.dialog-box .form-label{ width: 100px; line-height: 30px; }
+.dialog-box .form-entity{ max-width: 500px; }
+.dialog-box .form-field{ height: 30px; font-size: 12px; line-height: 26px; }
+.dialog-box .form-col-group{ width: 320px; }
+.dialog-box .form-col-group .form-entity{ width: 200px; }
+.dialog-box .form-col-group .ipt{ width: 140px; }
+.dialog-box .form-col-group .ipt-ms{ width: 40px; }
+.dialog-box .form-cb-group { margin-right: 26px; }
+.dialog-box .form-cb-group .cb{ margin-top: 7px; margin-right: 2px; }
+.dialog-box .form-action{ padding:4px 10px 0; margin-left: 158px;}
+.dialog-box .form-action .glb-btn{width: 116px;}
+.dialog-box .form-ui-tips{ top:0px; padding:5px 14px 5px 8px; }
+.dialog-box .form-ui-tips .drt{ top:9px; }
+.dialog-box .dlg-submit-tip{padding:6px 20px; background-color:#f83232;}
+.dialog-box .dlg-submit-tip h3{ color:#fff; }
+.dialog-box .dlg-succ-tip { background-color:rgba(255, 193, 7, .8); }
+.dialog-box .dlg-fail-tip { background-color:rgba(0, 0, 0, .6); }
+
+/*--------------------------- 对话框样式 ---------------------------*/

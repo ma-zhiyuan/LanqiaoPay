@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lanqiao.pay.mapper.Recharge_withdrawalMapper">
+<!-- <sql id="ini">
+	<choose></choose>
+</sql> -->
+<!-- 王增:根据分页条件查询充值或提现的记录条数 -->
+	<select id="getCountsByPage" parameterType="org.lanqiao.pay.base.bean.TradePage" resultType="int">
+		SELECT 
+		<choose>
+			<when test="initiator == 0">
+				COUNT(id) 
+			</when>
+			<when test="initiator == 1">
+				COUNT(user_id)
+			</when>
+			<when test="initiator == 2">
+				COUNT(enterprise_id)
+			</when>
+			<otherwise>COUNT(id)</otherwise>
+		</choose>
+		FROM recharge_withdrawal
+		WHERE 1 = 1
+		<if test="tradeType == null">
+			AND operation = 0
+		</if>
+		<if test="tradeType != null">
+			<if test="tradeType == 0 ">
+				<choose>
+					<when test="initiator == 0">
+						AND (operation = 0 OR operation = 3)
+					</when>
+					<when test="initiator == 1">
+						AND operation = 0
+					</when>
+					<when test="initiator == 2">
+						AND operation = 3
+					</when>
+				</choose>
+			</if>
+			<if test="tradeType == 4">
+				<choose>
+					<when test="initiator == 0">
+						AND (operation = 1 OR operation = 2)
+					</when>
+					<when test="initiator == 1">
+						AND operation = 1
+					</when>
+					<when test="initiator == 2">
+						AND operation = 2
+					</when>
+				</choose>
+			</if>
+		</if>
+		
+		<!-- 时间期限类型和时间范围不能同时生效,因此当没有时间范围的时候就来使时间期限类型生效, -->
+		<if test="begainTradeRange == null or endeTradeRange == null">
+			<choose>
+				<when test="tradeDateRangeType == 0">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</when>
+				<when test="tradeDateRangeType == 1">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 7 day))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 2">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 3">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 3 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 4">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 year))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<otherwise><!-- 默认今天 -->
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</otherwise>
+			</choose>
+		</if>
+	
+		<if test="tradeNumber != null">
+				AND id = #{tradeNumber}
+		</if>
+		<if test="tradeName != null and tradeName != ''">
+			<bind name="pattrn" value="'%'+_parameter.tradeName+'%'"/>
+				AND transaction_name like #{pattrn}
+		</if>
+		<!-- 当时间范围存在的话,上面的时间期限条件不会被生效. -->
+		<if test="begainTradeRange != null and endeTradeRange != null">
+			<![CDATA[AND unix_timestamp(time) > unix_timestamp(#{begainTradeRange})
+			AND unix_timestamp(time) <= unix_timestamp(#{endeTradeRange})]]>
+		</if>
+		<if test="tradeState == -1">
+				<choose>
+					<when test="initiator == 0">
+						
+					</when>
+					<when test="initiator == 1">
+						AND (state =  0 OR state =  1 OR state =  2)  
+					</when>
+					<when test="initiator == 2">
+						AND (state =  3 OR state =  4 OR state =  5)  
+					</when>
+				</choose>
+		</if>
+		<if test="tradeState == 0">
+				<choose>
+						<when test="initiator == 0">
+							AND (state =  0 OR state = 3) 
+						</when>
+						<when test="initiator == 1">
+							AND state =  0 
+						</when>
+						<when test="initiator == 2">
+							AND state =  3
+						</when>
+					</choose>
+		</if>
+		<if test="tradeState == 1">
+				<choose>
+						<when test="initiator == 0">
+							AND (state =  1 OR state = 4) 
+						</when>
+						<when test="initiator == 1">
+							AND state =  1 
+						</when>
+						<when test="initiator == 2">
+							AND state =  4
+						</when>
+					</choose>
+		</if>
+		<if test="tradeState == 2">
+				<choose>
+						<when test="initiator == 0">
+							AND (state =  2 OR state = 5)
+						</when>
+						<when test="initiator == 1">
+							AND state =  2 
+						</when>
+						<when test="initiator == 2">
+							AND state =  5
+						</when>
+					</choose>
+		</if>
+		
+		<choose>
+			<when test="begainMoneyRange==null and endMoneyRange!=null">
+				<![CDATA[AND money <= #{endMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange==null">
+				<![CDATA[AND money > #{begainMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange!=null">
+				<![CDATA[AND money > #{begainMoneyRange} AND money <= #{endMoneyRange}]]>
+			</when>
+		</choose>
+	</select>
+	
+	<resultMap type="Recharge_withdrawal" id="baseMap">
+		<id property="id" column="id"/>
+		<result property="money" column="money"/>
+		<result property="time" column="time"/>
+		<result property="transaction_name" column="transaction_name"/>
+		<result property="state" column="state"/>
+		<result property="operation" column="operation"/>
+		<result property="transaction_describe" column="transaction_describe"/>
+		<association property="user" column="user_id" 
+				select="org.lanqiao.pay.mapper.UserMapper.getUserById"></association>
+		<association property="enterprise" column="enterprise_id"
+			select="org.lanqiao.pay.mapper.EnterpriseMapper.selectEnterpriseIDandName"></association>
+	</resultMap>
+	<select id="getRecharge_withdrawalsByPage" parameterType="org.lanqiao.pay.base.bean.TradePage" 
+				resultMap="baseMap">
+		SELECT 
+			*
+		FROM recharge_withdrawal
+		WHERE 1 = 1
+		<if test="tradeType == null">
+			AND operation = 0
+		</if>
+		<if test="tradeType != null">
+			<if test="tradeType == 0 ">
+				<choose>
+					<when test="initiator == 0">
+						AND (operation = 0 OR operation = 3)
+					</when>
+					<when test="initiator == 1">
+						AND operation = 0
+					</when>
+					<when test="initiator == 2">
+						AND operation = 3
+					</when>
+				</choose>
+			</if>
+			<if test="tradeType == 4">
+				<choose>
+					<when test="initiator == 0">
+						AND (operation = 1 OR operation = 2) 
+					</when>
+					<when test="initiator == 1">
+						AND operation = 1
+					</when>
+					<when test="initiator == 2">
+						AND operation = 2
+					</when>
+				</choose>
+			</if>
+		</if>
+		
+		<!-- 时间期限类型和时间范围不能同时生效,因此当没有时间范围的时候就来使时间期限类型生效, -->
+		<if test="begainTradeRange == null or endeTradeRange == null">
+			<choose>
+				<when test="tradeDateRangeType == 0">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</when>
+				<when test="tradeDateRangeType == 1">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 7 day))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 2">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 3">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 3 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 4">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 year))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<otherwise><!-- 默认今天 -->
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</otherwise>
+			</choose>
+		</if>
+	
+		<if test="tradeNumber != null">
+				AND id = #{tradeNumber}
+		</if>
+		<if test="tradeName != null and tradeName != ''">
+			<bind name="pattrn" value="'%'+_parameter.tradeName+'%'"/>
+				AND transaction_name like #{pattrn}
+		</if>
+		<!-- 当时间范围存在的话,上面的时间期限条件不会被生效. -->
+		<if test="begainTradeRange != null and endeTradeRange != null">
+			<![CDATA[AND unix_timestamp(time) > unix_timestamp(#{begainTradeRange})
+			AND unix_timestamp(time) <= unix_timestamp(#{endeTradeRange})]]>
+		</if>
+		<if test="tradeState == -1">
+				<choose>
+					<when test="initiator == 0">
+						
+					</when>
+					<when test="initiator == 1">
+						AND (state =  0 OR state =  1 OR state =  2)  
+					</when>
+					<when test="initiator == 2">
+						AND (state =  3 OR state =  4 OR state =  5)  
+					</when>
+				</choose>
+		</if>
+		<if test="tradeState == 0">
+				<choose>
+						<when test="initiator == 0">
+							AND (state =  0 OR state = 3) 
+						</when>
+						<when test="initiator == 1">
+							AND state =  0 
+						</when>
+						<when test="initiator == 2">
+							AND state =  3
+						</when>
+					</choose>
+		</if>
+		<if test="tradeState == 1">
+				<choose>
+						<when test="initiator == 0">
+							AND (state =  1 OR state = 4) 
+						</when>
+						<when test="initiator == 1">
+							AND state =  1 
+						</when>
+						<when test="initiator == 2">
+							AND state =  4
+						</when>
+					</choose>
+		</if>
+		<if test="tradeState == 2">
+				<choose>
+						<when test="initiator == 0">
+							AND (state =  2 OR state = 5) 
+						</when>
+						<when test="initiator == 1">
+							AND state =  2 
+						</when>
+						<when test="initiator == 2">
+							AND state =  5
+						</when>
+					</choose>
+		</if>
+		<if test="initiator == 1">
+				AND user_id is not null
+		</if>
+		<if  test="initiator == 2">
+				AND enterprise_id is not null
+		</if>
+		<choose>
+			<when test="begainMoneyRange==null and endMoneyRange!=null">
+				<![CDATA[AND money <= #{endMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange==null">
+				<![CDATA[AND money > #{begainMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange!=null">
+				<![CDATA[AND money > #{begainMoneyRange} AND money <= #{endMoneyRange}]]>
+			</when>
+		</choose>
+			
+		ORDER BY time limit #{begin},#{pageSize}
+	</select>
+	
+	<!-- 王增:根据用户历史交易记录分页得到记录数 -->
+	<select id="getUserTradeCount" parameterType="org.lanqiao.pay.base.bean.UserTradePage" resultType="int">
+		SELECT 	COUNT(user_id)
+		FROM recharge_withdrawal
+		WHERE user_id = #{id}
+		<if test="tradeType != null">
+			AND operation = #{tradeType}
+		</if>
+		<!-- 时间期限类型和时间范围不能同时生效,因此当没有时间范围的时候就来使时间期限类型生效, -->
+		<if test="begainTradeRange == null or endeTradeRange == null">
+			<choose>
+				<when test="tradeDateRangeType == 0">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</when>
+				<when test="tradeDateRangeType == 1">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 7 day))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 2">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 3">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 3 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 4">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 year))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<otherwise><!-- 默认今天 -->
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</otherwise>
+			</choose>
+		</if>
+	
+		<if test="tradeNumber != null">
+				AND id = #{tradeNumber}
+		</if>
+		<if test="tradeName != null and tradeName != ''">
+			<bind name="pattrn" value="'%'+_parameter.tradeName+'%'"/>
+				AND transaction_name like #{pattrn}
+		</if>
+		<!-- 当时间范围存在的话,上面的时间期限条件不会被生效. -->
+		<if test="begainTradeRange != null and endeTradeRange != null">
+			<![CDATA[AND unix_timestamp(time) > unix_timestamp(#{begainTradeRange})
+			AND unix_timestamp(time) <= unix_timestamp(#{endeTradeRange})]]>
+		</if>
+		<if test="tradeState == -1">
+				AND (state =  0 OR state =  1 OR state =  2) 
+		</if>
+		<if test="tradeState == 0">
+				AND state =  0 
+		</if>
+		<if test="tradeState == 1">
+				AND state =  1 
+		</if>
+		<if test="tradeState == 2">
+				AND state =  2 
+		</if>
+		
+		<choose>
+			<when test="begainMoneyRange==null and endMoneyRange!=null">
+				<![CDATA[AND money <= #{endMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange==null">
+				<![CDATA[AND money > #{begainMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange!=null">
+				<![CDATA[AND money > #{begainMoneyRange} AND money <= #{endMoneyRange}]]>
+			</when>
+		</choose>
+	</select>
+	
+	
+	<!--根据用户的交易的分页对象得到该用户交易记录-->
+	<select id="getRecharge_withdrawalsByUserTradePage" parameterType="org.lanqiao.pay.base.bean.UserTradePage" 
+			resultMap="baseMap">
+		SELECT *
+		FROM recharge_withdrawal
+		WHERE user_id = #{id}
+		<if test="tradeType != null">
+			AND operation = #{tradeType}
+		</if>
+		<!-- 时间期限类型和时间范围不能同时生效,因此当没有时间范围的时候就来使时间期限类型生效, -->
+		<if test="begainTradeRange == null or endeTradeRange == null">
+			<choose>
+				<when test="tradeDateRangeType == 0">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</when>
+				<when test="tradeDateRangeType == 1">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 7 day))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 2">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 3">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 3 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 4">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 year))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<otherwise><!-- 默认今天 -->
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</otherwise>
+			</choose>
+		</if>
+	
+		<if test="tradeNumber != null">
+				AND id = #{tradeNumber}
+		</if>
+		<if test="tradeName != null and tradeName != ''">
+			<bind name="pattrn" value="'%'+_parameter.tradeName+'%'"/>
+				AND transaction_name like #{pattrn}
+		</if>
+		<!-- 当时间范围存在的话,上面的时间期限条件不会被生效. -->
+		<if test="begainTradeRange != null and endeTradeRange != null">
+			<![CDATA[AND unix_timestamp(time) > unix_timestamp(#{begainTradeRange})
+			AND unix_timestamp(time) <= unix_timestamp(#{endeTradeRange})]]>
+		</if>
+		<if test="tradeState == -1">
+				AND (state =  0 OR state =  1 OR state =  2) 
+		</if>
+		<if test="tradeState == 0">
+				AND state =  0 
+		</if>
+		<if test="tradeState == 1">
+				AND state =  1 
+		</if>
+		<if test="tradeState == 2">
+				AND state =  2 
+		</if>
+		
+		<choose>
+			<when test="begainMoneyRange==null and endMoneyRange!=null">
+				<![CDATA[AND money <= #{endMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange==null">
+				<![CDATA[AND money > #{begainMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange!=null">
+				<![CDATA[AND money > #{begainMoneyRange} AND money <= #{endMoneyRange}]]>
+			</when>
+		</choose>
+		
+		ORDER BY time limit #{begin},#{pageSize}
+	</select>
+	
+	<!-- 王增:根据企业用户历史交易记录分页得到记录数	企业的充值operation值为3 提现operation为2 -->
+	<select id="getEnterpriseUserTradeCount" parameterType="org.lanqiao.pay.base.bean.UserTradePage" resultType="int">
+		SELECT 	COUNT(enterprise_id)
+		FROM recharge_withdrawal
+		WHERE enterprise_id = #{id}
+		<if test="tradeType != null">
+			<choose>
+				<when test="tradeType == 0">
+					AND operation = 3
+				</when>
+				<when test="tradeType == 1">
+					AND operation = 2
+				</when>
+			</choose>
+			
+		</if>
+		<!-- 时间期限类型和时间范围不能同时生效,因此当没有时间范围的时候就来使时间期限类型生效, -->
+		<if test="begainTradeRange == null or endeTradeRange == null">
+			<choose>
+				<when test="tradeDateRangeType == 0">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</when>
+				<when test="tradeDateRangeType == 1">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 7 day))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 2">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 3">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 3 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 4">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 year))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<otherwise><!-- 默认今天 -->
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</otherwise>
+			</choose>
+		</if>
+	
+		<if test="tradeNumber != null">
+				AND id = #{tradeNumber}
+		</if>
+		<if test="tradeName != null and tradeName != ''">
+			<bind name="pattrn" value="'%'+_parameter.tradeName+'%'"/>
+				AND transaction_name like #{pattrn}
+		</if>
+		<!-- 当时间范围存在的话,上面的时间期限条件不会被生效. -->
+		<if test="begainTradeRange != null and endeTradeRange != null">
+			<![CDATA[AND unix_timestamp(time) > unix_timestamp(#{begainTradeRange})
+			AND unix_timestamp(time) <= unix_timestamp(#{endeTradeRange})]]>
+		</if>
+		<if test="tradeState == -1">
+				AND (state =  3 OR state =  4 OR state =  5) 
+		</if>
+		<if test="tradeState == 0">
+				AND state =  3 
+		</if>
+		<if test="tradeState == 1">
+				AND state =  4 
+		</if>
+		<if test="tradeState == 2">
+				AND state =  5 
+		</if>
+		
+		<choose>
+			<when test="begainMoneyRange==null and endMoneyRange!=null">
+				<![CDATA[AND money <= #{endMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange==null">
+				<![CDATA[AND money > #{begainMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange!=null">
+				<![CDATA[AND money > #{begainMoneyRange} AND money <= #{endMoneyRange}]]>
+			</when>
+		</choose>
+	</select>
+	
+	
+		<!-- 王增:根据企业用户历史交易记录分页得到记录	企业的充值operation值为3 提现operation为2 -->
+	<select id="getRecharge_withdrawalsForEnterpriseUserByUserTradePage" 
+				parameterType="org.lanqiao.pay.base.bean.UserTradePage" resultMap="baseMap">
+		SELECT *
+		FROM recharge_withdrawal
+		WHERE enterprise_id = #{id}
+		<if test="tradeType != null">
+			<choose>
+				<when test="tradeType == 0">
+					AND operation = 3
+				</when>
+				<when test="tradeType == 1">
+					AND operation = 2
+				</when>
+			</choose>
+			
+		</if>
+		<!-- 时间期限类型和时间范围不能同时生效,因此当没有时间范围的时候就来使时间期限类型生效, -->
+		<if test="begainTradeRange == null or endeTradeRange == null">
+			<choose>
+				<when test="tradeDateRangeType == 0">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</when>
+				<when test="tradeDateRangeType == 1">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 7 day))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 2">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 3">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 3 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 4">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 year))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<otherwise><!-- 默认今天 -->
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</otherwise>
+			</choose>
+		</if>
+	
+		<if test="tradeNumber != null">
+				AND id = #{tradeNumber}
+		</if>
+		<if test="tradeName != null and tradeName != ''">
+			<bind name="pattrn" value="'%'+_parameter.tradeName+'%'"/>
+				AND transaction_name like #{pattrn}
+		</if>
+		<!-- 当时间范围存在的话,上面的时间期限条件不会被生效. -->
+		<if test="begainTradeRange != null and endeTradeRange != null">
+			<![CDATA[AND unix_timestamp(time) > unix_timestamp(#{begainTradeRange})
+			AND unix_timestamp(time) <= unix_timestamp(#{endeTradeRange})]]>
+		</if>
+		<if test="tradeState == -1">
+				AND (state =  3 OR state =  4 OR state =  5) 
+		</if>
+		<if test="tradeState == 0">
+				AND state =  3 
+		</if>
+		<if test="tradeState == 1">
+				AND state =  4 
+		</if>
+		<if test="tradeState == 2">
+				AND state =  5 
+		</if>
+		
+		<choose>
+			<when test="begainMoneyRange==null and endMoneyRange!=null">
+				<![CDATA[AND money <= #{endMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange==null">
+				<![CDATA[AND money > #{begainMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange!=null">
+				<![CDATA[AND money > #{begainMoneyRange} AND money <= #{endMoneyRange}]]>
+			</when>
+		</choose>
+		ORDER BY time limit #{begin},#{pageSize}
+	</select>
+	<!-- 通过企业id获取企业的充值和提现记录 王向宇 -->
+	<select id="getEnterpriseRechargeAndWithdrawal" parameterType="Integer" resultMap="baseMap">
+		select * from recharge_withdrawal where enterprise_id = #{enterpriseId}
+	</select>
+	<!-- 获取提现量 -->
+	<select id="GetEntNumber" parameterType="TimeBean" resultType="int">
+		select count(*) from recharge_withdrawal where state in (0,1,3) and time between
+		#{beginTime} and #{endTime}
+	</select>
+	<!-- 获取提现量  总量-->
+	<select id="getDrNuber"   resultType="int">
+		select count(*) from recharge_withdrawal where state in (0,1,3) 
+	</select>
+	<!-- 获取转账量 -->
+	<select id="GetUserNumber" parameterType="TimeBean" resultType="int">
+		select count(*) from recharge_withdrawal where state in (2,4,5) and time between
+		#{beginTime} and #{endTime}
+	</select>
+	<!-- 获取转账量 总数 -->
+	<select id="getReNumber"  resultType="int">
+		select count(*) from recharge_withdrawal  where state in (2,4,5)
+	</select>
+</mapper>

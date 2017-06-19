@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lanqiao.pay.mapper.EnterpriseUserMapper">
+	<select id="selectEnterpriseUserByEmail" resultMap="selectEnterpriseUserByEmailMap" parameterType="String">
+		SELECT * FROM enterprise_user WHERE email = #{email}
+	</select>
+	<resultMap type="EnterpriseUser" id="selectEnterpriseUserByEmailMap">
+		<!-- 我这一般只在登录和验证用户邮箱是否重名时使用,因此就不查询级联属性了 -->
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="email" column="email"/>
+		<result property="password" column="password"/>
+		<result property="tell" column="tell"/>
+		<result property="photo" column="photo"/>
+		<result property="address" column="address"/>
+		<result property="identity" column="identity"/>
+		<result property="registTime" column="regist_Time"/>
+		<result property="isDelete" column="is_Delete"/>
+		<result property="isForbid" column="is_Forbid"/>
+		<result property="balance" column="balance"/>
+		<association property="secret" column="secret_id" select="org.lanqiao.pay.mapper.SecretMapper.getSecret"></association>
+		<association property="enterprise" select="org.lanqiao.pay.mapper.EnterpriseMapper.selectEnterpriseIDandName" column="enterprise_id"></association>
+	</resultMap>
+	<!-- 重置密码 -->
+	<update id="rePassword">
+		UPDATE enterprise_user SET password=#{rePassword} WHERE id=#{id}
+	</update>
+	<!-- 注销用户 陈楚 -->
+	<update id="deleteState" parameterType="int">
+		UPDATE enterprise_user SET is_Delete = 1 WHERE id=#{id}
+	</update>
+	<!-- 修改企业用户状态信息 改为禁用  陈楚-->
+	<update id="updateState" parameterType="int">
+		UPDATE enterprise_user SET is_forbid = 0 WHERE id=#{id}
+	</update>
+	<!-- 修改企业用户状态信息 改为恢复  陈楚-->
+	<update id="backToNormal" parameterType="int">
+		UPDATE enterprise_user SET is_forbid = 1 WHERE id=#{id}
+	</update>
+	<!-- 查询含有关键字的用户的记录条数 -->
+	<select id="getuserByqualified" parameterType="java.lang.String" resultType="int">
+		select COUNT(id) FROM enterprise_user
+		WHERE name like "%"#{keyword}"%"
+		or address like "%"#{keyword}"%"
+		or identity like "%"#{keyword}"%"
+	</select>
+	<!-- 通过分页查询的信息 -->
+	<select id="getPage" parameterType="org.lanqiao.pay.base.bean.EnterpriseUserCreteria" resultMap="getAllByPageMap">
+		select id,name,email,tell,address,identity,regist_Time,is_Delete,is_Forbid,balance,secret_id,enterprise_id 
+		FROM enterprise_user
+		WHERE name like '%${keyword}%'
+		or address like '%${keyword}%'
+		or identity like '%${keyword}%'
+		ORDER BY ${orderby}
+		LIMIT #{from},#{pageSize}
+	</select>
+	<!--通过email获取secret中id  -->
+	<resultMap type="EnterpriseUser" id="getSecretMap">
+	   <id property="id" column="id"/>
+	   <!-- 一对一查询 -->
+	   <association property="secret" select="org.lanqiao.pay.mapper.SecretMapper.getSecret" column="secret_id"></association>
+	</resultMap>
+	<select id="getEnterpriseUserByEmail" parameterType="String" resultMap="getSecretMap">
+	   select * from enterprise_user where email = #{email}
+	</select>
+	<select id="getEmail" parameterType="int" resultType="String">
+	   select email from enterprise_user where secret_id = #{id}
+	</select>
+	<!-- 通过分页条件查询记录条数 -->
+	<select id="getCountByPage" resultType="int" parameterType="EnterpriseUserPage">
+		SELECT COUNT(id) FROM enterprise_User
+		WHERE 1=1
+		<if test="emailKeyWord!=null and emailKeyWord!=''">
+			<bind name="pattrn" value="'%'+_parameter.emailKeyWord+'%'"/>
+			AND email like #{pattrn}
+		</if> 
+		<if test="registTime!=null">
+			<![CDATA[AND  unix_timestamp(regist_time) >  unix_timestamp(#{registTime})]]>
+		</if>
+		<if test="isApprove!=2">
+			AND is_forbid = #{isApprove}
+		</if>	
+	</select>
+	
+	<!-- 通过分页条件查询记录 -->
+	<select id="getAllByPage" parameterType="EnterpriseUserPage" resultMap="getAllByPageMap">
+		SELECT *
+			FROM enterprise_User
+			WHERE 1=1
+		<if test="emailKeyWord!=null and emailKeyWord!=''">
+			<bind name="pattrn" value="'%'+_parameter.emailKeyWord+'%'"/>
+			AND email like #{pattrn}
+		</if> 
+		<if test="registTime!=null">
+			<![CDATA[AND  unix_timestamp(regist_time) >  unix_timestamp(#{registTime})]]>
+		</if>
+		<if test="isApprove!=2">
+			AND is_forbid = #{isApprove}
+		</if>	
+			ORDER BY regist_time limit #{begin},#{pageSize}
+	</select>
+	
+	<resultMap type="EnterpriseUser" id="getAllByPageMap" extends="selectEnterpriseUserByEmailMap">
+		<association property="enterprise" column="enterprise_id" select=
+		"org.lanqiao.pay.mapper.EnterpriseMapper.selectEnterpriseIDandName"></association>
+	</resultMap>
+	
+	<select id="getEnterpriseUserDetail" resultMap="getEnterpriseUserDetailMap">
+		SELECT* FROM enterprise_user WHERE id = #{id}
+	</select>
+	<!-- 不包含secret -->
+	<resultMap type="EnterpriseUser" id="getEnterpriseUserDetailMap" extends="selectEnterpriseUserByEmailMap">
+		<association property="enterprise" column="enterprise_id" select="org.lanqiao.pay.mapper.EnterpriseMapper.getEnterpriseById"></association>
+	</resultMap>
+	
+	<update id="updateEnetrpriseUserToNotForbid">
+		UPDATE enterprise_user SET is_forbid = 1 WHERE id=#{id}
+	</update>
+	<update id="updateEmail">
+		update enterprise_user set email=#{email} where secret_id = #{id}
+	</update>
+
+	<!-- 更新 -->
+	<update id="update" parameterType="org.lanqiao.pay.base.entity.EnterpriseUser">
+	   update enterprise_user set name=#{name},email=#{email},password=#{password},tell=#{tell},photo=#{photo},address=#{address},
+	   identity=#{identity},regist_Time=#{registTime},is_Delete=#{isDelete},is_Forbid=#{isForbid} where id=#{id}
+	</update>
+	
+	<select id="getEnterpriseByenterpriseId" parameterType="int" resultType="EnterpriseUser">
+	   select * from enterprise_user where enterprise_id = #{enterprise}
+	</select> 
+	<update id="updateEnterUserBalance" parameterType="EnterpriseUser">
+	   update enterprise_user set balance=#{balance} where id = #{id}
+	</update>
+	<insert id="addEnterpriseUser" parameterType="EnterpriseUser" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO enterprise_user(id,name,email,password,tell,photo,address,identity,regist_time,
+		is_Delete,is_forbid,enterprise_id,secret_id)
+		VALUES(#{id},#{name},#{email},#{password},#{tell},#{photo,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{identity},
+		sysdate()
+		,#{isDelete},#{isForbid},#{enterprise.id},#{secret.id})
+	</insert>
+	<select id="verifyName" parameterType="String" resultType="int">
+		select count(*) from enterprise_user where name=#{name}
+	</select>
+	<select id="verifyUser" parameterType="String" resultType="String" >
+		select password from enterprise_user where name=#{name}
+	</select>
+	<!-- 修改sql语句进行级联查询 孙航建 -->
+	<resultMap type="EnterpriseUser" id="getAllEnterpriseByMap">
+	   <id property="id" column="id"/>
+	   <association property="enterprise" select="org.lanqiao.pay.mapper.EnterpriseMapper.getEnterpriseById" column="enterprise_id"></association>
+	   <association property="secret" select="org.lanqiao.pay.mapper.SecretMapper.getSecret" column="secret_id"></association>
+	</resultMap>
+	<select id="getUserByNameAndPassword" parameterType="String" resultMap="getAllEnterpriseByMap">
+		select * from enterprise_user where name=#{0} and password=#{1}
+	</select>
+	<!-- 通过企业用户的邮箱获取企业的id  王向宇 -->
+	<select id="getEnterpriseIdByEmail" parameterType="String" resultType="Integer">
+		select enterprise_id from enterprise_user where email=#{email}
+	</select>
+	<!-- 通过注册时间获取相对应的注册企业数  刘江 -->
+	<select id="getEntNumbersByReTime" resultType="int" parameterType="TimeBean">
+		 select count(*)  from enterprise_user where regist_Time between
+		#{beginTime} and #{endTime}
+	</select>
+	<!-- 通过注册时间获取相对应的注册企业数  刘江 -->
+	<select id="getEntNumber" resultType="int">
+		 select count(*)  from enterprise_user 
+	</select>
+	<!-- 级联查询    何璐 -->
+	<resultMap type="EnterpriseUser" id="getEnUserMap">
+	  <id property="id" column="id"/>
+	  <association property="enterprise" select="org.lanqiao.pay.mapper.EnterpriseMapper.getEnterpriseById" column="enterprise_id"></association>
+	  <association property="secret" select="org.lanqiao.pay.mapper.SecretMapper.getSecret" column="secret_id"></association>
+	</resultMap>
+	<!-- 通过手机号获取企业法定人   何璐 -->
+	<select id="getEnterpriseUserByPhone" parameterType="String" resultMap="getEnUserMap">
+	    select * from enterPrise_user where tell=#{tell}
+	</select>
+	<!-- 王增:getEnterpriseUserByEnterpriseId -->
+	<select id="getEnterpriseUserByEnterpriseId" resultMap="selectEnterpriseUserByEmailMap">
+		select * from enterprise_user where enterprise_id = #{id}
+	</select>
+	<!-- 王增:getEnterpriseUserById -->
+	<select id="getEnterpriseUserById" resultMap="selectEnterpriseUserByEmailMap">
+		select * from enterprise_user where id = #{id}
+	</select>
+	<!-- 企业用户余额充值  刘宣 -->
+	<update id="addEnterpriseUserBalance"  parameterType="EnterpriseUser">
+		update enterprise_user set balance=#{balance} where id = #{id}
+	</update>
+	<!-- 根据企业id查询法定人 -->
+	<select id="getEnterpriseUserByEPID" parameterType="Integer" resultType="EnterpriseUser">
+	    select * from enterprise_user where enterprise_id = #{id} 
+	</select>
+	<!-- 通过企业用户的id修改企业用户的头像 -->
+	<update id="modifyPhotoById" parameterType="EnterpriseUser">
+		update enterprise_user set photo=#{photo} where id=#{id}
+	</update>
+	<update id="updateEnterPriseUserPhoneById" parameterType="map">
+		update enterprise_user set tell=#{tell} where id=#{id}
+	</update>
+</mapper>

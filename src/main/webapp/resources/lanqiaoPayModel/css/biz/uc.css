@@ -1,0 +1,159 @@
+/* Copyright © 2016 lanqiao.org. All rights reserved. Author:zbq 2016-09-18 */
+
+/*------------------------- 个人中心样式 -------------------------*/
+
+/*-------- 个人中心主页样式 --------*/
+
+/* 通用按钮样式 */
+.uc-opt-btn{ display: block; height: 34px; font-size: 14px; line-height: 34px; border-radius: 2px; color:#fff; transition: all .2s; -moz-transition: all .2s; -webkit-transition: all .2s; -o-transition: all .2s; }
+.uc-opt-btn:hover{ color: #fff; text-decoration: none; }
+.uc-trade-btn{ position: relative; width: 116px; text-indent: 52px; letter-spacing:2px; background-color: #31aae1; }
+.uc-trade-btn:hover{ background-color: #2897ca; }
+.uc-trade-btn .iconfont{ position: absolute; left: -23px; top: 0; font-size: 16px; color: #fff; }
+.uc-card-btn{ width: 94px; text-align: center; background-color: #ea7144; }
+.uc-card-btn:hover{ background-color: #dc673c; }
+.uc-opt-links li{ float: left; height: 12px; line-height: 12px; padding: 0 6px; border-right: 1px solid #ccc; }
+.uc-opt-links li.last{ border-right: 0; padding-right: 0; }
+
+/* 通用框内列表样式 */
+.uc-col-items{ }
+.uc-col-items li{ height: 20px; padding: 1px 0; }
+.uc-col-items .iconfont{ float: left; font-size: 14px; line-height: 20px; margin-right: 6px;}
+.uc-col-items .item-txt{ float: left;  }
+.uc-col-items .item-act{ float: right; }
+.uc-col-items .item-act a{padding:0 2px;}
+.uc-col-entity{ margin-top: 14px;padding-top: 12px;border-top: 1px solid #e6e6e6;line-height: 20px;}
+.uc-col-entity p{line-height: 18px;}
+.uc-col-entity .uc-entity-tr{float: right;}
+.uc-col-entity .uc-entity-cl{width: 150px;float: left;}
+.uc-col-entity .uc-entity-cr{width: 94px;float: right;}
+
+/* 顶部banner */
+.uc-banner, .uc-banner a{color:#fff;}
+.uc-banner{ height: 90px; padding-top: 14px; background:url(../../images/uc_banner.jpg) center center no-repeat; }
+.uc-banner .opt{ margin-left: 8px; }
+.uc-banner .uname{ font-size: 16px; line-height: 20px; }
+.uc-banner-left{ float: left; }
+.uc-banner-left .portrait{ display: block; width: 74px; height: 74px; overflow: hidden; border-radius: 50%; border: 1px solid #08c; }
+.uc-banner-left .portrait img{ width: 74px; height: 74px; }
+.uc-banner-main{ float: left; margin-left: 20px; }
+.uc-banner-main li{ float: left; }
+.uc-banner-top{ margin-top: 18px; }
+.uc-banner-btm{ margin-top: 12px; margin-left: 2px; }
+.uc-banner-btm li{ float: left; line-height: 12px; padding-bottom: 1px; padding-left: 18px; margin-left: 18px; border-left: 1px solid #fff; }
+.uc-banner-btm li.first{ margin-left: 0; padding-left: 0; border-left: none; }
+
+/* 主体 */
+.uc-main{ padding-top: 22px; background: #f1f1f1; }
+.uc-main-box{ height: 144px; border: 1px solid #ddd; color:#a1a1a1; background-color: #fff; }
+.uc-main-box h3{font-size: 14px; color:#666; }
+.uc-col-main{ float: left; width: 446px; }
+
+/* 当前商户 */
+.uc-ptn-box{ height: 42px; overflow: hidden; line-height: 42px; color: #ff7800; border-bottom: 1px solid #ddd; }
+.uc-ptn-box .iconfont{ float: left; font-size: 26px; line-height: 40px; margin-left: 22px; }
+.uc-ptn-box .ptn-name{ float: left; font-size: 16px; margin-left: 6px; }
+.uc-ptn-box .ptn-switch{ float: right; margin-right: 18px; }
+
+/* 账户信息 */
+.uc-acc-box{ height: 149px;  }
+.uc-acc-bd{ padding: 16px 26px 0 27px; }
+.uc-acc-ht{height: 24px;}
+.uc-acc-ht .title{float: left;}
+.uc-acc-ht .tips{float: left; color:#ccc; margin-left: 14px;line-height: 22px;}
+.uc-acc-main{ height: 40px; line-height: 40px; margin-top: 2px; }
+.uc-acc-main .item-amount{ float: left; font-size: 14px; color:#787878; }
+.uc-acc-main .item-amount .money{ font-size: 24px; margin-right: 4px; font-family: tahoma,arial,"Hiragino Sans GB"; color: #ff6600; }
+.uc-acc-main .item-link{ float: right; margin-top:3px; }
+.uc-acc-main .item-loan{ line-height: 20px; }
+.uc-acc-action{ margin-top: 6px; }
+.uc-acc-action .uc-opt-btn{ float: left; margin-right: 22px; }
+.uc-acc-action .uc-opt-last{ margin-right: 0; }
+.uc-acc-action .uc-opt-links{ float: left; margin-top: 8px; }
+
+/* 主体右侧 */
+.uc-col-side{ float: left; width: 284px; height: 144px; border-left: 1px solid #ddd; }
+.uc-col-side .side-hd{ height: 32px; margin: 12px 25px 0; line-height: 30px;border-bottom: 1px solid #e3e9e9; }
+.uc-main-box .side-hd h3{float: left; }
+.uc-col-side .side-bd{ padding: 14px 27px 0; }
+.uc-col-side .side-item{padding: 6px 10px;background-color: #eee;border-radius: 4px;color:#787878;}
+.uc-col-side .uc-entity-cr{margin-top: 4px;color:#999;}
+.uc-col-personal{width: 278px;}
+.uc-col-security{width: 290px;}
+.uc-col-security .side-bd{padding-top: 12px;}
+.uc-safe-level{ height: 20px; float: right;margin-top: 4px;}
+.uc-safe-level .level-txt{ color: #787878;float: left; }
+.uc-safe-level .level-tnk{ padding-left: 4px; }
+.uc-safe-level .level-ico{ float: right;width: 120px; height: 8px; margin-top: 6px; background:url(../../images/sp_security.png) no-repeat 0 -148px; }
+.uc-safe-level .level-ico-1{ background-position: 0 -158px; }
+.uc-safe-level .level-ico-2{ background-position: 0 -168px; }
+.uc-safe-level .level-ico-3{ background-position: 0 -178px; }
+
+/* 交易列表 */
+.uc-trade-box{ margin-top: 16px; color:#666; border: 1px solid #ddd; background-color: #fff; }
+.uc-trade-hd{ height: 44px; padding-top: 4px; margin: 0 24px; border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.uc-trade-hd .title{ float: left; font-size: 14px; line-height: 40px; color:#4d4d4d; }
+.uc-trade-hd .iconfont{ font-size: 20px; color:#4d4d4d; }
+.uc-trade-hd .col-opts{ margin-top: 15px; }
+.uc-trade-hd .col-opts li{ float: left; height: 12px; line-height: 12px; padding: 0 8px; }
+.uc-trade-hd .col-opts .nb{ border: none; }
+.uc-trade-hd .col-opts .em{ font-weight: bold; color: #ff6600; padding: 0 1px; }
+.uc-trade-hd .col-opts .mr{ margin-right: 10px; }
+.uc-trade-hd .col-opts-side{ float: right; }
+.uc-trade-hd .col-opts-side li{ border-left: 1px solid #b2b2b2; }
+.uc-trade-hd .col-opts-side li:first-child{border-left: none;}
+.uc-trade-bd{ padding: 12px 16px 12px 18px; }
+.uc-trade-list{ width: 100%; text-align: center; }
+.uc-trade-list tr{ border-bottom: 1px solid #e6e6e6; }
+.uc-trade-list tr.last{ border-bottom: none; }
+.uc-trade-list td{ padding: 10px 0; }
+.uc-trade-list .date{ width: 76px; color:#666; padding-left: 16px; }
+.uc-trade-list .time{ width: 42px; color:#aaa; padding-right: 60px; }
+.uc-trade-list .group{ width: 80px; }
+.uc-trade-list .group p{ width: 80px; }
+.uc-trade-list .subject{ width: 250px; }
+.uc-trade-list .subject p{ width: 428px; color:#4d4d4d; }
+.uc-trade-list .order-no{ width: 210px; color:#bbb; }
+.uc-trade-list .money{ width: 160px; font-weight: bold; color:#f37800; padding-right: 40px; }
+.uc-trade-list .status{ width: 164px; text-align: right;padding-right: 20px;}
+
+/*-------- 个人中心主页样式 --------*/
+
+/*--------- 银行卡列表样式 ---------*/
+.card-items{ background-color: #fff; }
+.card-items li{ float: left; width: 372px; padding:16px 0 6px 0; margin: 0 16px 20px 18px; border-radius: 4px 4px 2px 2px; border:1px solid #d3d3d3; transition: all .1s; -moz-transition: all .1s; -webkit-transition: all .1s; -o-transition: all .1s; }
+.card-items li:hover{box-shadow: 0 0 14px rgba(0,0,0,.2);}
+.card-items li.df-show{box-shadow: 0 0 14px rgba(90,168,224,.4);}
+.card-items .card-layout{ padding: 0 18px; }
+.card-items .card-col-l{ float: left; }
+.card-items .card-col-r{ float: right; }
+.card-items .card-top{ height: 34px; }
+.card-items .card-mid{ height: 38px; margin-top:8px; line-height: 38px; border-bottom: 1px solid #ccc; border-top: 1px solid #ccc; background-color: #d9d9d9; }
+.card-items .card-btm{ padding-top:14px;padding-bottom: 8px;}
+.card-items .card-btm .card-col-l{ line-height: 20px;color:#999;}
+.card-items .card-btm .card-col-r{ border-left: 1px solid #eee; padding-left: 20px;line-height: 40px;}
+.card-items .bank-ico { float: left; margin-left: -6px; }
+.card-items .card-no { font-size: 16px; line-height: 34px; color:#474747; }
+.card-items .card-type { float: left; height: 17px; margin-left: 10px; margin-top: 8px; padding: 0 4px; line-height: 16px; color:#fff; border-radius: 1px; background-color: #7dafc8; }
+.card-items .card-personal { background-color: #ff9900; }
+.card-items .card-time{ color:#a7a7a7; }
+.card-items .card-opt{ margin-left: 10px; }
+.card-items .card-opt-hide{display: none;}
+.card-items li:hover .card-opt-hide{display: inline;}
+.card-items .card-txt{color:#aaa;}
+.card-items .card-btm .card-pay-l{ line-height: 40px;}
+.card-items .card-btm .card-pay-l a{ float: left; }
+.card-items .card-btm .card-pay-l p{ margin-right: 40px; }
+/*--------- 银行卡列表样式 ---------*/
+
+/*---------- 商户列表样式 ----------*/
+.ptn-items .ptn-name{ width: 186px; padding-left: 18px; font-size: 16px; }
+.ptn-items .ptn-default{ width: 80px; margin-top: -1px; margin-left: 56px; padding-bottom: 1px; }
+.ptn-items .ptn-default-flg{ padding: 2px 5px; color:#fff; background-color: #7dafc8; }
+.ptn-items .bind-state{ width: 156px; margin-left: 30px; }
+.ptn-items .bind-action{ margin-left: 10px; }
+/*---------- 商户列表样式 ----------*/
+
+/*------------------------- 个人中心样式 -------------------------*/
+
+

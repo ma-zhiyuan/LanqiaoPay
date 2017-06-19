@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lanqiao.pay.mapper.BankCardMapper">
+	<select id="getBankcardId" parameterType="int" resultType="int">
+		select card_id from user where id=#{id}
+	</select>
+
+	<select id="getBankcard" parameterType="int" resultType="BankCard">
+		select *
+		from bankcard where id=#{id}
+	</select>
+	<!-- 通过企业id查询一系列银行卡 王向宇 -->
+	<select id="getBankCardsByEnterpriseId" parameterType="Integer"
+		resultMap="getBankCardMap">
+		select * from bankcard where enterprise_id = #{enterpriseId} and state=1
+	</select>
+	<!-- 通过用户id查询一系列银行卡 王向宇 -->
+	<select id="getBankCardsByUserId" parameterType="Integer"
+		resultMap="getBankCardMap">
+		select * from bankcard where user_id = #{userId}
+	</select>
+	<!-- BankCard的resultMap 王向宇 -->
+	<resultMap type="BankCard" id="getBankCardMap">
+		<id property="id" column="id" />
+		<id property="balance" column="balance" />
+		<id property="cardNumber" column="card_number" />
+		<id property="isDefault" column="is_default" />
+		<id property="isQuickPay" column="is_quick_pay" />
+		<id property="applicationTime" column="application_time" />
+		<id property="bankCardPassWord" column="bankCardPass_word" />
+		<id property="address" column="adress" />
+		<collection property="userId"
+			select="org.lanqiao.pay.mapper.UserMapper.getUser" column="user_id"></collection>
+		<collection property="enterpriseId"
+			select="org.lanqiao.pay.mapper.EnterpriseMapper.selectEnterpriseIDandName"
+			column="enterprise_id"></collection>
+		<collection property="bankId"
+			select="org.lanqiao.pay.mapper.BankMapper.getBankByIdwang" column="bank_id"></collection>
+	</resultMap>
+	<!-- 王增:根据银行卡号得到银行卡 -->
+	<select id="getBankCardByCardNumber" parameterType="String"
+		resultMap="getBankCardMap">
+		select * from bankcard where card_Number = #{cardNumber}
+	</select>
+    <!-- 通过bankId获取利率 孙航建 -->
+    <resultMap type="BankCard" id="getAllBank3">
+		<id property="id" column="id" />
+		<association property="bankId"
+			select="org.lanqiao.pay.mapper.BankMapper.getOneBank" column="bank_id"></association>
+	</resultMap>
+    <select id="getBanKParities" parameterType="int" resultMap="getAllBank3">
+       select * from bankcard where id = #{id}
+    </select>
+	<!-- 通过userId获取所有的bankCard 孙航建 -->
+	<resultMap type="BankCard" id="getAllBank2">
+		<id property="id" column="id" />
+		<association property="bankId"
+			select="org.lanqiao.pay.mapper.BankMapper.getOneBank" column="bank_id"></association>
+		<association property="userId"
+			select="org.lanqiao.pay.mapper.UserMapper.getUser" column="user_id"></association>	
+	    <association property="enterpriseId"
+			select="org.lanqiao.pay.mapper.EnterpriseMapper.getEnterpriseById"
+			column="enterprise_id"></association>		
+	</resultMap>
+	<select id="getAllBankCard" parameterType="int" resultMap="getAllBank2">
+		select * from bankcard where user_id = #{user_id};
+	</select>
+    <select id="getAllBankCardByEnterPriseId" parameterType="int" resultMap="getAllBank2">
+        select * from bankcard where enterprise_id = #{enterprise_id};
+    </select>
+	<!-- 更新银行卡的余额 孙航建 -->
+	<update id="updateBankCardByIdAndBalance" parameterType="BankCard">
+		update
+		bankcard set balance = #{balance} where id = #{id}
+	</update>
+	
+	<select id="getBankByUserId" parameterType="String" resultMap="getAllBank2">
+		select id,user_id,balance,bank_id,card_number,enterprise_id from
+		bankcard where card_number = #{card_number}
+	</select>
+
+	<!-- 用户添加银行卡 刘江 -->
+	<insert id="userAddBankCard" parameterType="BankCard">
+		<selectKey keyProperty="id" order="AFTER" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+		insert into bankcard
+		(user_id,balance,bank_id,card_number,bankcard_password,application_time,is_default,is_quick_pay,state)
+		values(#{userId.id},#{balance},1,#{cardNumber},#{bankCardPassWord},#{applicationTime},0,0,1)
+	</insert>
+	<!-- 企业添加银行卡 刘江 -->
+	<insert id="enterAddBankCard" parameterType="BankCard">
+		<selectKey keyProperty="id" order="AFTER" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+		insert into bankcard
+		(enterprise_id,balance,bank_id,card_number,bankcard_password,application_time,is_default,is_quick_pay,state)
+		values(#{enterpriseId.id},#{balance},1,#{cardNumber},#{bankCardPassWord},#{applicationTime},0,0,1)
+	</insert>
+	<!-- 用户查询所有卡 刘江 -->
+	<select id="userGetBankCards" parameterType="int" resultType="BankCard">
+		select id,balance,card_number from bankcard where user_id=#{id}
+	</select>
+	<!-- 用户查询一张默认卡 刘江 -->
+	<select id="userGetBankCard" parameterType="int" resultType="BankCard">
+		select id,balance,card_number from bankcard where user_id=#{id} and
+		is_default=1
+	</select>
+	<!-- 企业查询卡 刘江 -->
+	<select id="enterGetBankCards" parameterType="int" resultType="BankCard">
+		select id,balance,card_number from bankcard where
+		enterprise_id=#{enterpriseId}
+	</select>
+	<!-- 修改卡的余额 刘江 -->
+	<update id="updateBankCard" parameterType="BankCard">
+		update bankcard set
+		balance=#{balance} where id=#{id}
+	</update>
+	<!-- 设置一张卡为移除状态  刘江 -->
+	<update id="removeBankCard" parameterType="int">
+		update bankcard set
+		state=0 where id=#{id}
+	</update>
+	<!-- 修改为默认卡 刘江 -->
+	<update id="modifyIsDefault" parameterType="int">
+		update bankcard set
+		is_default=1 where id=#{id}
+	</update>
+
+	<!-- 设用户默认卡为非默认 刘江 -->
+	<update id="removeIsDefault" parameterType="int">
+		update bankcard set
+		is_default=0 where user_id=#{id} and is_default=1
+	</update>
+		<!-- 设企业默认卡为非默认 刘江 -->
+	<update id="EntremoveIsDefault" parameterType="int">
+		update bankcard set
+		is_default=0 where enterprise_id=#{id} 
+	</update>
+	<!-- 通过银行卡号获取银行卡    刘宣 -->
+	<select id="getBankCardById" parameterType="String" resultType="BankCard">
+		select * from bankcard where card_number=#{cardNumber} 
+	</select>
+	<!-- 充值后减少银行卡余额 刘宣-->
+	<update id="reduceBankCardBalance" parameterType="BankCard">
+		update bankcard set balance=#{balance} where card_Number=#{cardNumber}
+	</update>
+	<!-- 查询用户所有卡（级联查询Bank,一对一）  刘宣-->
+	<select id="getBankCardsByEnterprise_Id" parameterType="int" resultMap="EnterpriseBankCardMap">
+		select * from bankcard where enterprise_id=#{id}
+	</select>
+	<resultMap type="BankCard" id="EnterpriseBankCardMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<association property="bankId" column="bank_id"
+			select="org.lanqiao.pay.mapper.BankMapper.getBankById"/>
+	</resultMap>
+	<!-- 添加一条充值记录  刘宣-->
+	<insert id="addRecharge" parameterType="Recharge_withdrawal">
+		insert into recharge_withdrawal	(enterprise_id,bankcard_id,money,
+		time,operation,state,transaction_name,transaction_describe) 
+		values(#{enterprise.id},#{bankCard.id},#{money},#{time},#{operation},
+		#{state},#{transaction_name},#{transaction_describe})
+	</insert>
+	<!-- 开启快捷支付 刘江 -->
+	<update id="modifyIsQuickPay" parameterType="int">
+		update bankcard set
+		is_quick_pay=1 where id=#{id}
+	</update>
+	<!-- 用户关闭快捷支付 刘江 -->
+	<update id="shutQuickPay" parameterType="int">
+		update bankcard set
+		is_quick_pay=0 where id=#{id}
+	</update>
+	
+
+	<!-- 李明 通过number获取银行卡 -->
+	<select id="getCardByNumber" parameterType="String" resultType="BankCard">
+		select * from bankcard where card_number=#{card_number}
+	</select>
+
+	<!-- 李明 充值银行卡减钱 -->
+	<update id="chongZhiout" parameterType="BankCard">
+		update bankcard set
+		balance=#{balance} where id=#{id}
+	</update>
+	<!--李明 插入一条记录 -->
+	<insert id="chongZhiJiLu" parameterType="Recharge_withdrawal">
+		<selectKey keyProperty="id" order="AFTER" resultType="int">
+			SELECT
+			LAST_INSERT_ID();
+		</selectKey>
+		insert into recharge_withdrawal
+		(user_id,enterprise_id,bankcard_id,money,time,operation,state,transaction_name,transaction_describe)
+		values(#{user.id},#{enterprise.id},#{bankCard.id},#{money},#{time},#{operation},#{state},#{transaction_name},#{transaction_describe})
+	</insert>
+
+	<select id="getbankid" parameterType="Integer" resultType="String">
+		select bank.name from bankcard join bank on bank.id=bankcard.bank_id
+		where bankcard.id=#{bankcard.id}
+	</select>
+	<!-- 李明 通过级联查询获取相应的信息 -->
+	<resultMap type="BankCard" id="getNameById">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<association property="bankId"
+			select="org.lanqiao.pay.mapper.BankMapper.getBankByIdli" column="bank_id">
+		</association>
+	</resultMap>
+	<select id="getBankName" parameterType="Integer" resultMap="getNameById">
+		select * from bankcard where user_id=#{user_id} and state=1
+	</select>
+	<!-- 转账：毋泽航 -->
+	<update id="updateBankCardBalance" parameterType="BankCard">
+	    update bankcard set
+		balance=#{balance} where id=#{id}
+	</update>
+</mapper>

@@ -1,0 +1,98 @@
+/* Copyright © 2016 lanqiao.org. All rights reserved. Author:zbq 2016-09-18 */
+
+/*--------------------------- 列表样式 ---------------------------*/
+.glb-list-box{ padding-bottom: 40px; }
+.glb-list-hd{ line-height: 24px; padding-bottom: 6px; border-bottom: 2px solid #b3cfee; }
+.glb-list-bd{ }
+.list-hd-title{ float: left; }
+.list-hd-title .iconfont{ float: left; font-size: 22px; }
+.list-hd-title .subject{ float: left; margin-left: 2px; font-size: 16px; }
+.list-hd-side{ float: right; margin-right: 4px; }
+.list-hd-side li{ float: left; }
+.list-hd-side .side-ft{ padding: 0 8px; }
+.list-hd-side .iconfont{ font-size: 14px; }
+.list-cond-box{ }
+.list-cond-hd{ position: relative; margin-top: 16px; height: 18px; }
+.list-cond-hd li{ float: left; }
+.list-cond-hd .cond-col-l{ float: left; }
+.list-cond-hd .cond-col-l{ float: left; }
+.list-cond-hd .cond-col-r{ float: right; margin-right: 114px; }
+.list-cond-hd .more-cond-btn{ position: absolute; right: 0; bottom:-9px; z-index:99; padding: 6px 12px 8px 14px; border: 1px solid transparent; border-bottom: none; background-color: #f9f9f9; }
+.list-cond-hd .more-cond-btn:hover{ text-decoration: none; }
+.list-cond-hd .iconfont{ color:#666; }
+.list-cond-hd .cond-tbs-down{ border-color:#b4bdd4; }
+.list-cond-items li{ padding: 0 2px; }
+.list-cond-items a{ padding: 2px 7px 3px; border-radius: 2px; }
+.list-cond-items a:hover{ background-color: #cbe9f1; text-decoration: none; }
+.list-cond-items .current a{ background-color:#0188cc; color:#fff; }
+.list-cond-bd{ position: relative; z-index:98; margin-top: 8px; padding: 10px 0; border: 1px solid #b4bdd4; }
+.list-cond-bd .submit-cond-btn{ position: absolute; right: 14px; bottom:15px; line-height: 28px; }
+.list-cond-bd .ipt{ width: 166px; height: 20px; line-height: 20px; padding: 2px 4px; }
+.list-cond-bd .ipt-date{ cursor: pointer; background: none; }
+.list-cond-bd .sel{max-width: 166px; height: 24px; padding-left: 4px; }
+.list-cond-bd .twin-item{ width: 72px; }
+.list-cond-tbs{ float: left; }
+.list-cond-tbs tr{ height: 36px; }
+.list-cond-tbs th{ width: 76px; text-align: right; padding-right: 8px; color:#666; font-weight: normal; }
+.list-cond-tbs td{ padding-right: 20px; }
+.list-main-tbs{ width: 100%; text-align: center; margin-top: 14px; color:#555; }
+.list-main-tbs thead tr{ border-bottom: 1px solid #bbb; }
+.list-main-tbs tbody tr{ border-bottom: 1px solid #ddd; transition: all .1s; -moz-transition: all .1s; -webkit-transition: all .1s; -o-transition: all .1s;}
+.list-main-tbs tbody tr:hover{ background-color: #e5eefa; }
+.list-main-tbs th{ padding: 16px 6px; background-color: #e5e9f3; }
+.list-main-tbs td{ padding: 14px 6px; }
+.list-main-tbs .ft{ padding: 0 3px; }
+.list-main-tbs .weak{color:#b8c4ce;}
+.list-main-tbs .td-list-bank{width: 200px;padding:10px;}
+.list-main-tbs .td-list-opt a{display: inline-block;margin-left: 8px;}
+
+
+.list-main-tbs .col-order-by{position:relative;padding-right:12px;}
+.list-main-tbs .col-order-by:hover{text-decoration: none;color:#06c;}
+.list-main-tbs .order-arr{position:absolute;right:0;top:-3px;height:26px;width:8px;}
+.list-main-tbs .order-arr .arr{display:block;height:0;width:0;border-width:5px 4px;border-style: solid;border-color:transparent;}
+.list-main-tbs .order-arr .arr-up{border-bottom-color: #a6a6a6;}
+.list-main-tbs .order-arr .arr-down{border-top-color: #aaa;margin-top:2px;}
+.list-main-tbs .order-asc .arr-up{border-bottom-color: #0188cc;}
+.list-main-tbs .order-desc .arr-down{border-top-color: #0188cc;}
+
+/* 分页 */
+.list-page-box{ margin-top: 40px; }
+.list-page-item{ height: 30px; float: right; }
+.list-page-item li{ float: left; padding: 0 4px; }
+.list-page-item a, .list-page-item span{ display: block; width: 26px; height: 26px; text-align: center; line-height: 26px; color:#888; transition: all .2s; -moz-transition: all .2s ease; -webkit-transition: all .2s; -o-transition: all .2s; }
+.list-page-item a{ border: 1px solid #b8c4ce; background-color: #fff; }
+.list-page-item a:hover{ text-decoration: none; border-color: #cbe9f1; background-color: #cbe9f1; }
+.list-page-item .current span{ color:#fff; border: 1px solid #1f8bc1; background-color: #1f8bc1; }
+/* 分页 */
+
+
+/* 个人中心列表样式 */
+.col-main .list-main-tbs{margin-top: 0;}
+/* 个人中心列表样式 */
+
+/* 蓝桥支付*/
+.list-pay-side{ float: right; font-size: 15px}
+.list-pay-side span{  padding-left: 10px;}
+.list-pay-side span:nth-child(2){ color: #009900;font-weight: bold}
+.list-pay{  margin-bottom: 20px}
+.list-pay-label{ float: left;font-size: 15px;}
+.list-cond-hd .cond-pay-l{ float: left; color: #000}
+.list-cond-hd .cond-pay-l li{ font-size: 14px; color: #000;padding: 0 15px  }
+.list-cond-hd .cond-pay-l li span{ color: #9a9a9a; }
+.list-cond-hd .cond-pay-l .present a{ background-color:#999999; color:#fff; }
+/*.list-cond-hd{ position: relative; margin-top: 16px; height: 18px; }*/
+.list-cond-hd .ipt{ width: 166px; height: 20px; line-height: 20px; padding: 2px 4px; }
+.list-cond-hd .ipt-date{ cursor: pointer; background: none; }
+.list-cond-hd .sel{max-width: 166px; height: 24px; padding-left: 4px; }
+.list-cond-hd .twin-item{ width: 72px; }
+.list-cond-hd .trad-input{ margin-left: 16px}
+.add-goods{ float: right; color: #fff; padding: 0 5px;font-size: 14px;height: 30px; line-height: 30px;width: 80px;margin-bottom: 8px}
+.goods-list tr,.goods-list th,.goods-list td{ border: 1px solid #bbb;}
+
+
+
+
+
+
+/*--------------------------- 列表样式 ---------------------------*/

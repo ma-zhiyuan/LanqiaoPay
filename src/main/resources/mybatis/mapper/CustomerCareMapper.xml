@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lanqiao.pay.mapper.CustomerCareMapper">
+	<!-- 批量增加客服 -->
+	<insert id="addList" useGeneratedKeys="true" keyProperty="id">
+		insert into customer_service (password,state,service_number)
+		values
+			<foreach collection="list" item="customerCare" separator=",">
+				(
+					#{customerCare.password},
+					#{customerCare.state},#{customerCare.serviceCount}
+				)
+			</foreach>
+	</insert>
+	<!-- 分页查询 -->
+	<select id="getCustomerCareList" parameterType="org.lanqiao.pay.base.bean.CustomerCareCreteria" 
+			resultType="org.lanqiao.pay.base.entity.CustomerCare" >
+		select id,state,service_number serviceCount 
+		from customer_service 
+		where 1=1
+		<include refid="paging"/>
+		order by ${order}
+		limit #{pageNoFrom},#{pageSize}
+	</select>
+	<select id="getCustomerCareCount" parameterType="org.lanqiao.pay.base.bean.CustomerCareCreteria"
+				 resultType="java.lang.Integer" >
+		select count(id) from customer_service 
+		where 1=1
+		<include refid="paging"/>
+	</select>
+	<!-- sql片段，用于分页 -->
+	<sql id="paging">
+		<if test="state == 0 ">
+			and state = 0 
+			<if test="minServiceCount != null and minServiceCount != '' 
+					and maxServiceCount != null and maxServiceCount != '' ">
+				and id between #{minServiceCount} AND #{maxServiceCount}
+			</if>
+		</if>
+		<if test="state == 1">
+			and state = 1 
+			<if test="minServiceCount != null and minServiceCount != '' 
+					and maxServiceCount != null and maxServiceCount != '' ">
+				and id between #{minServiceCount} AND #{maxServiceCount}
+			</if>
+		</if>
+	</sql>
+	<!-- update customerService info -->
+	<update id="updateCustomerCare" parameterType="org.lanqiao.pay.base.entity.CustomerCare">
+		update customer_service set id = #{id}
+		<if test="password !=null and password != '' ">
+			,password = #{password}
+		</if>
+		<if test="state != null">
+			,state = #{state}
+		</if>
+		<if test="serviceCount !=null and serviceCount !=''">
+			,service_number = #{serviceCount}
+		</if>
+		where id = #{id}
+	</update>
+	
+	<select id="selectcustomerCarebyID" parameterType="int"  resultType="org.lanqiao.pay.base.entity.CustomerCare">
+		select  id ,password,state, service_number  from customer_service where id=#{id}
+	</select>
+</mapper>

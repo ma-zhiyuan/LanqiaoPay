@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lanqiao.pay.mapper.BankMapper">
+
+	<!-- 通过BankId查询Bank 刘宣-->
+	<select id="getBankById" parameterType="Integer" resultType="Bank">
+		select * from bank where id=#{id}
+	</select>
+	
+	<select id="getBankByName" resultType="Bank">
+		SELECT id,name FROM bank WHERE name = #{bankName}
+	</select>
+	
+	<insert id="addBank" parameterType="Bank" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO bank(id,name) VALUES(#{id},#{name})
+	</insert>
+  
+  <!--  通过id获取银行卡的信息 -->
+  <select id="getOneBank" parameterType="int" resultType="Bank">
+     select * from bank where id = #{id}
+  </select>	
+  <!-- 更新其状态 孙航建-->
+  <update id="updateWithdrawalOne" parameterType="int">
+     update recharge_withdrawal set state = 1 where id = #{id}
+  </update>
+  <!-- 更新企业提现之后的状态 孙航建 -->
+  <update id="updateEnterpriseWithdrawalState" parameterType="int">
+     update recharge_withdrawal set state = 4 where id = #{id}
+  </update>
+  <!-- 通过id获取表一条数据 孙航建 -->
+  <resultMap type="Recharge_withdrawal" id="getOneMapById">
+     <id property="id" column="id"/>
+     <association property="user" select="org.lanqiao.pay.mapper.UserMapper.getUser" column="user_id"></association>
+     <association property="bankCard" select="org.lanqiao.pay.mapper.BankCardMapper.getBankcard" column="bankcard_id"></association>
+     <association property="enterprise" select="org.lanqiao.pay.mapper.EnterpriseMapper.getEnterpriseById" column="enterprise_id"></association>
+  </resultMap>
+  <select id="getOneWithdrawal" parameterType="int" resultMap="getOneMapById">
+     select * from recharge_withdrawal where id = #{id}
+  </select>
+   <!--  客服端查看所有的企业提现记录   孙航建 -->
+   <resultMap type="Recharge_withdrawal" id="withdrawalMapEnter">
+    <id property="id" column="id"/>
+    <association property="enterprise" select="org.lanqiao.pay.mapper.EnterpriseMapper.getEnterpriseById" column="enterprise_id"></association>
+  </resultMap>
+  <select id="getAllEnterpriseWithdrawal" resultMap="withdrawalMapEnter">
+     select * from recharge_withdrawal where state = '3'
+  </select>
+  <select id="getAllEnterpriseWithdrawalTrue" resultMap="withdrawalMapEnter">
+     select * from recharge_withdrawal where state = '4' 
+  </select>
+  <select id="getAllWithdrawalTrue" resultMap="withdrawalMapEnter">
+    select * from recharge_withdrawal where state = '1'
+  </select>
+  <!--  客服端查看所有的个人提现记录   孙航建 -->
+  <select id="getAllWithdrawal" resultMap="withdrawalMap">
+     select * from recharge_withdrawal where state = '0'
+  </select>
+   <!-- 企业分页 孙 -->
+    <resultMap type="Recharge_withdrawal" id="withdrawalMapEnter2">
+    <id property="id" column="id"/>
+    <association property="enterprise" select="org.lanqiao.pay.mapper.EnterpriseMapper.getEnterpriseById" column="enterprise_id"></association>
+  </resultMap>
+  <select id="getAllEnterpriseWithdrawallist" parameterType="org.lanqiao.pay.base.bean.Recharge_withdrawalCreteria" resultMap="withdrawalMapEnter2">
+    select a.id,enterprise_id,money,time,operation,state,transaction_name,transaction_describe
+  	from recharge_withdrawal  a Left Join enterprise b on a.enterprise_id=b.id 
+  	where a.state = #{state}
+  	<if test="fuzzy !=null and fuzzy != '' ">
+	  	and b.enterprise_name like CONCAT(CONCAT('%',#{fuzzy}),'%')
+  	</if>
+  	order by ${order}
+  	limit #{pageNoFrom},#{pageSize}
+  </select>
+   <!-- 分页记录总数  wu(企业版) -->
+  <select id="getEnterpriseRecharge_withdrawalCount" parameterType="org.lanqiao.pay.base.bean.Recharge_withdrawalCreteria" 
+  			resultType="Integer">
+  	select count(a.id) 
+  	from recharge_withdrawal a Left Join enterprise b on a.enterprise_id=b.id 
+  	where a.state = #{state}
+  	<if test="fuzzy !='' and fuzzy != null ">
+	  	and b.enterprise_name like CONCAT(CONCAT('%',#{fuzzy}),'%')
+  	</if>
+  </select>
+  <resultMap type="Recharge_withdrawal" id="withdrawalMap">
+    <id property="id" column="id"/>
+    <association property="user" select="org.lanqiao.pay.mapper.UserMapper.getUser" column="user_id"></association>
+  </resultMap>
+  <!-- 分页记录表 wu -->
+  <select id="getRecharge_withdrawalList" parameterType="org.lanqiao.pay.base.bean.Recharge_withdrawalCreteria" resultMap="withdrawalMap">
+  	select a.id,user_id,money,time,operation,a.state,transaction_name,transaction_describe
+  	from recharge_withdrawal a Left Join user b on a.user_id=b.id
+  	where a.state = #{state} 
+  	<if test="fuzzy !=null and fuzzy != '' ">
+	  	and b.name like CONCAT(CONCAT('%',#{fuzzy}),'%')
+  	</if>
+  	order by ${order}
+  	limit #{pageNoFrom},#{pageSize}
+  </select>
+  <!-- 分页记录总数  wu -->
+  <select id="getRecharge_withdrawalCount" parameterType="org.lanqiao.pay.base.bean.Recharge_withdrawalCreteria" 
+  			resultType="Integer">
+  	select count(a.id) 
+  	from recharge_withdrawal a Left Join user b on a.user_id=b.id 
+  	where a.state = #{state}
+  	<if test="fuzzy !='' and fuzzy != null ">
+	  	and b.name like CONCAT(CONCAT('%',#{fuzzy}),'%')
+  	</if>
+  </select>
+  
+  <!--  个人提现时生成一条记录  孙航建 -->
+  <insert id="toWinthdrawMoney" parameterType="Recharge_withdrawal">
+     <selectKey keyProperty="id" order="AFTER" resultType="int">
+       SELECT LAST_INSERT_ID();
+     </selectKey>
+     insert into recharge_withdrawal(user_id,enterprise_id,bankcard_id,money,time,operation,state,transaction_name,transaction_describe)
+     values(#{user.id},null,#{bankCard.id},#{money},#{time},#{operation},#{state},#{transaction_name},#{transaction_describe})
+  </insert>
+  <!-- 将生成的利息插入到数据库中 孙航建 -->
+  <insert id="insertIntoPeritiesMon" parameterType="CurrencyAmountRecord">
+      <selectKey keyProperty="id" order="AFTER" resultType="int">
+       SELECT LAST_INSERT_ID();
+     </selectKey>
+     insert into currency_amount_record(user_id,enterprise_user_id,parities_money,time) values(#{user.id},null,#{parities_money},#{time})
+  </insert>
+ 
+  <!--将企业提现生成的利息插入到数据库中 孙航建  -->
+  <insert id="insertIntoPeritiesEnterpriseMon" parameterType="CurrencyAmountRecord">
+      <selectKey keyProperty="id" order="AFTER" resultType="int">
+       SELECT LAST_INSERT_ID();
+     </selectKey>
+     insert into currency_amount_record(user_id,enterprise_user_id,parities_money,time) values(null,#{enterpriseUser.id},#{parities_money},#{time})
+  </insert>
+  <!-- 企业提现时生成一条记录  孙航建-->
+   <insert id="insertIntoEnterpriseWithdraw" parameterType="Recharge_withdrawal">
+     <selectKey keyProperty="id" order="AFTER" resultType="int">
+       SELECT LAST_INSERT_ID();
+     </selectKey>
+     insert into recharge_withdrawal(user_id,enterprise_id,bankcard_id,money,time,operation,state,transaction_name,transaction_describe)
+     values(null,#{enterprise.id},#{bankCard.id},#{money},#{time},#{operation},#{state},#{transaction_name},#{transaction_describe})
+  </insert>
+ 
+ <select id="getBankByIdli" parameterType="int" resultType="Bank">
+    select * from bank where id=#{id}
+ </select>
+	<!-- 通过id获取一个银行  王向宇 -->
+	<select id="getBankByIdwang" parameterType="Integer" resultType="Bank">
+		select id,name,parities from bank where id=#{bank_id}
+	</select>
+	<!-- 通过银行卡号获取交易记录数量  王向宇-->
+	<select id="getRechangeByCardNumberId" parameterType="Integer" resultType="Integer">
+		select count(*) from recharge_withdrawal where bankcard_id=#{id}
+	</select>
+	<!-- 通过银行卡号获取转账记录数量  王向宇 -->
+	<select id="getTransferByCardNumberId" parameterType="Integer" resultType="Integer">
+		select count(*) from transfer where to_bankcard_id=#{id}
+	</select>
+	<select id="gettotal" parameterType="String" resultType="int">
+		select count(id) from bank
+		where name like "%"#{keyword}"%"
+	</select>
+	<select id="getPage" parameterType="org.lanqiao.pay.base.bean.BankCreteria"
+		resultType="Bank">
+		select
+		id,name from bank
+		where name like '%${keyword}%'
+		order by ${orderby}
+		limit
+		#{begin},#{pageSize}
+	</select>
+	<insert id="addbank">
+		insert into bank(id,name,parities) values(#{0},#{1},0.00)
+	</insert>
+	<!-- 插入一条个人向企业转账的记录  何璐 -->
+   <insert id="insertTransferByUserToEp" parameterType="Transfer">
+       <selectKey keyProperty="id" order="AFTER" resultType="int">
+       SELECT LAST_INSERT_ID();
+       </selectKey>
+       insert into transfer(transfer_name,transfer_description,from_user_id,from_enterprise_id,to_user_id,to_enterprise_id,from_bankcard_id,to_bankcard_id,money,time,state)
+       values(#{transferName},#{transferDescription},#{fromUser.id},null,null,#{toEnterprise.id},#{fromBankCard.id},#{toBankCard.id},#{money},#{time},#{state})
+   </insert>
+   <!-- 更新个人向企业转账的记录中的状态  何璐 -->
+   <update id="updateTransferByUserToEp" parameterType="int">
+       update transfer set state=1 where id=#{id}
+   </update>
+   <select id="getCardNumById" parameterType="Integer" resultType="Integer">
+   		select count(id) from bankcard where bank_id=#{id}
+   </select>
+  <delete id="deleteBank" parameterType="Integer">
+  		delete from bank where id=#{id}
+  </delete>
+  <select id="vertifyBankName" parameterType="String" resultType="int">
+  		select count(*) from bank where name=#{name}
+  </select>
+  <update id="updateBank"  >
+  		update bank set name=#{1} where id=#{0}
+  </update>
+   <!-- 插入一条个人向个人转账的记录  代显峰-->
+   <!--1.个人使用支付宝余额向个人支付宝用户转账  -->
+   <insert id="userInsertToUser" parameterType="Transfer">
+    <selectKey keyProperty="id" order="AFTER" resultType="int">
+       SELECT LAST_INSERT_ID();
+       </selectKey>
+       insert into transfer(transfer_name,transfer_description,from_user_id,from_enterprise_id,to_user_id,to_enterprise_id,from_bankcard_id,to_bankcard_id,money,time,state)
+       values(#{transferName},#{transferDescription},#{fromUser.id},null,#{toUser.id},null,null,null,#{money},#{time},#{state})
+   </insert>
+   <!--2.个人使用银行卡向个人银行卡转账  -->
+   <insert id="userBankInsertToUserBank" parameterType="Transfer">
+    <selectKey keyProperty="id" order="AFTER" resultType="int">
+       SELECT LAST_INSERT_ID();
+       </selectKey>
+       insert into transfer(transfer_name,transfer_description,from_user_id,from_enterprise_id,to_user_id,to_enterprise_id,from_bankcard_id,to_bankcard_id,money,time,state)
+       values(#{transferName},#{transferDescription},null,null,null,null,#{fromBankCard.id},#{toBankCard.id},#{money},#{time},#{state})
+   </insert>
+   <!--3.个人使用支付宝余额向个人银行卡转账  -->
+   <insert id="userInsertToUserBank" parameterType="Transfer">
+    <selectKey keyProperty="id" order="AFTER" resultType="int">
+       SELECT LAST_INSERT_ID();
+       </selectKey>
+       insert into transfer(transfer_name,transfer_description,from_user_id,from_enterprise_id,to_user_id,to_enterprise_id,from_bankcard_id,to_bankcard_id,money,time,state)
+       values(#{transferName},#{transferDescription},#{fromUser.id},null,null,null,null,#{toBankCard.id},#{money},#{time},#{state})
+   </insert>
+   <!--4.个人使用银行卡向个人支付宝用户转账  -->
+   <insert id="userBankInsertToUser" parameterType="Transfer" >
+    <selectKey keyProperty="id" order="AFTER" resultType="int">
+       SELECT LAST_INSERT_ID();
+       </selectKey>
+       insert into transfer(transfer_name,transfer_description,from_user_id,from_enterprise_id,to_user_id,to_enterprise_id,from_bankcard_id,to_bankcard_id,money,time,state)
+       values(#{transferName},#{transferDescription},null,null,#{toUser.id},null,#{fromBankCard.id},null,#{money},#{time},#{state})
+   </insert> 		
+  
+</mapper>

@@ -1,0 +1,49 @@
+/* Copyright © 2016 lanqiao.org. All rights reserved. Author:zbq 2016-09-18 */
+
+/*------------------------- 登录样式 -------------------------*/
+.login-body{  background: url(../../images/bg.jpg);  }
+.login-wrapper{ height: 440px; }
+.login-box{ position: absolute; right: 0; top:80px; }
+.login-pos{ position: relative; }
+.login-bd{ position: relative; width: 220px; padding:32px 30px 38px; color: #fff; background-color:rgba(0,0,0,.4); filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#66000000', EndColorStr='#66000000'); opacity: .8\9\0; }
+.login-title{ padding-bottom:6px; font-size: 18px; }
+.login-item{ height: 40px; margin-top: 10px; border: 1px solid #222; background-color: #000; box-shadow: 1px 1px 8px #666; opacity: .4; filter: alpha(opacity=40); }
+.login-item dt{ float: left; width: 38px; height: 40px; text-align: center; border-right: 1px solid #222; }
+.login-item dt .iconfont{ font-size: 20px; line-height: 40px; }
+.login-item dd{ float: left; }
+.login-item dd input{ width: 156px; height: 20px; padding:10px; color:#fff; border: none; background-color:transparent; }
+.login-help{ height: 18px; line-height: 18px; margin-top: 8px; }
+.login-help a{ font-size: 12px; color: #fff; opacity: .7; filter: alpha(opacity=70); }
+.login-help a:hover{ text-decoration: underline; opacity: 1; filter: alpha(opacity=100); }
+.login-help .forget-pwd{ float: right; }
+.login-help .get-audit{ float: right; }
+.login-help .register{ float: left; }
+.login-code{ display: none; margin-top: 10px; }
+.login-code .login-item{ float: left; width: 130px; margin-top: 0; }
+.login-code .login-item input{ width: 70px; }
+.login-code .login-captcha, .login-code .login-captcha img {width: 80px;height: 40px;}
+.login-code .login-captcha{ float: right; border: 1px solid #ccc;}
+.login-code .login-captcha img {cursor: pointer;}
+.login-tip { padding:16px 1px 6px; margin-top: 12px; border-top: 1px solid; border-color: rgba(255, 255, 255, .3); border-color: #aaa\9; }
+.login-tip .acc-info{ font-size: 16px; font-weight: bold; color:#ff9700; }
+.login-error { position: absolute; left: 30px; bottom:222px; width: 217px; padding: 5px 0; border:1px solid #fadcd3; background-color: #fdeee9; }
+.login-error p { color:#4d4d4d; padding-left: 28px; padding-right: 8px; }
+.login-error span{ position: absolute; left:6px; top:2px; font-size: 16px; width: 20px; height: 20px; color:#f17975; }
+.login-error p a { padding: 1px 0; }
+.login-btn{ width: 220px; height: 40px; margin-top: 12px; line-height: 40px; font-size: 16px; background:-webkit-gradient(linear,left top,left bottom,from(#fcd20e),to(#c5ab1e)); background:-moz-linear-gradient(top,#fcd20e,#c5ab1e); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcd20e', endColorstr='#c5ab1e'); background:-o-linear-gradient(top,#fcd20e,#c5ab1e); background:-ms-linear-gradient(top,#fcd20e 0,#c5ab1e 100%); background:linear-gradient(top,#fcd20e,#c5ab1e); }
+.login-opa60{ background-color:rgba(0,0,0,.4); filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#99000000', EndColorStr='#99000000'); }
+#top{ background-color:rgba(31,139,193,.4);}
+#header{ background: none}
+#bottom{padding: 24px 0;border: none;color: #fff;background: none}
+#bottom, #bottom a { color:#fff; }
+/* 已登录 */
+.logined-box{ top:98px; }
+
+/* 带验证码 */
+.login-wth-code{ top:58px; }
+.login-wth-code .login-error{ bottom:272px; }
+.login-wth-code .login-code{ display: block; }
+/*------------------------- 登录样式 -------------------------*/
+
+
+

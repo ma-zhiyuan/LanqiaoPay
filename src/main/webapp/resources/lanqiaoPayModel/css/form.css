@@ -1,0 +1,163 @@
+/* Copyright © 2016 lanqiao.org. All rights reserved. Author:zbq 2016-09-18 */
+
+/*--------------------------- 表单样式 ---------------------------*/
+.form-bd{ width: 780px; margin:0 auto; padding-top: 50px;padding-bottom: 16px;}
+.form-bd .ipt{ width: 274px; height: 24px; line-height: 22px; padding: 4px 6px; font-weight: bold; }
+.form-bd .ipt::-webkit-input-placeholder{ font-size: 12px; font-weight: normal; color:#999;}
+.form-bd .ipt:-moz-placeholder{ font-size: 12px; font-weight: normal; color:#999; opacity: 1;}
+.form-bd .ipt::-moz-placeholder{ font-size: 12px; font-weight: normal; color:#999; opacity: 1;}
+.form-bd .ipt:-ms-input-placeholder{ font-size: 12px; font-weight: normal;color:#999; }
+.form-bd .ipt-no{ width: 160px; }
+.form-bd .ipt-code{ width: 60px; }
+.form-bd .ipt-date{ width: 94px; text-align: center; cursor: pointer;}
+.form-bd .ipt-name{ width: 96px; }
+.form-bd .ipt-pwd{ width: 210px; }
+.form-bd .ipt-money{ width: 100px; }
+.form-bd .ipt-mobile{ width: 158px; }
+.form-bd .ipt-cardno{ width: 169px; }
+.form-bd .sel{ height: 34px; line-height: 34px; *margin-top: 6px;}
+.form-bd .sel-card{ width: 100px; }
+.form-bd .ta{ width: 440px; height: 120px; padding:8px 10px; }
+.form-bd .fl{ font-size: 12px; margin-top: 4px; color:#999; }
+.form-bd .unit{ margin-left: -2px; color:#888; font-size: 14px; }
+.form-bd .rapid-link{ line-height: 34px; }
+.form-bd .strong{ color:#ff3300; }
+
+/* 表单组样式 */
+.form-group{ border: none; }
+.form-group .group-hd, .form-group .column-hd{ height: 44px; line-height: 44px; }
+.form-group .group-hd{ padding: 0; }
+.form-group .group-hd h3, .form-group .group-hd p{ float: left; }
+.form-group .group-hd h3{ padding: 0 20px}
+.form-group .group-hd p{ margin-left: 20px; font-size: 12px; color:#888; line-height: 44px; }
+.form-group .iconfont{ margin-right: 18px; }
+.form-group .group-bd{ padding: 44px 0 12px; border-top: 1px solid #e0e0e0; }
+.form-group .column-hd{ border-color: #ccd0d3; background-color: #eff0f2; }
+.form-group .column-hd h3{ font-size: 14px; color:#fff; background-color: #f15928; }
+
+/* 表单项组件样式 */
+.form-item{ padding-bottom: 18px; line-height: 30px; *zoom:1; }
+.form-item:after{ content:""; clear: both; display: block; }
+.form-item-ta{ height: 168px; }
+.form-item-bank .form-label, .form-item-bank .rapid-link{ line-height: 44px; }
+.form-item-bank .form-ui-tips{ top:5px; }
+.form-label, .form-entity, .form-field, .form-tips{ float: left; }
+.form-label { height: 34px; width: 218px; text-align: right; line-height: 34px; font-size: 14px; }
+.form-label em{ vertical-align: -10%; padding-right: 4px; color: #ff0066; }
+.form-entity{ margin-left: 18px; }
+.form-entity-holder{ margin-left: 236px; }
+.form-field { // min-width: 284px; padding-right: 14px; }
+.form-text{ font-size: 14px; color:#999; line-height: 34px; }
+.form-text .split{color:#555;padding:0 4px;}
+.form-text-em{color:#ff6600;}
+.form-text-st{font-weight: bold;}
+.form-cb-group, .form-twin-group, .form-col-group{ float: left; line-height: 34px; }
+.form-cb-group{ margin-right: 30px; }
+.form-cb-group .cb, .form-cb-group .lb, .form-cb-group .img{ float: left; }
+.form-cb-group .cb{ margin-top: 11px; margin-right: 4px; }
+.form-cb-group .lb { line-height: 32px; }
+.form-cb-group .lb a{ margin-left: 2px; }
+.form-cb-group .img{ width: 102px; height:22px; padding: 5px 10px; margin-left: 4px; border:1px solid #c2c2c3; background-color: #fff; }
+.form-cb-last{ margin-right: 0; }
+.form-col-group{ width: 356px; }
+.form-col-group .ipt{ max-width: 200px; }
+.form-twin-group { margin-right: 10px; }
+.form-twin-last { float: right; margin-right: 0; }
+.form-twin-rapid{ margin-right: 0; margin-left: 10px; }
+
+.form-upload-tips{ padding-bottom: 14px; }
+.form-upload-tips p{ color:#999; }
+.form-upload-groups{ float: left; height: 206px; margin-top: 8px; }
+.form-upload-groups li{ float: left; width: 156px; margin-right: 64px; }
+.form-upload-img .btn-file{ display: block; width: 156px; text-align: center; border: 1px solid #4194c1; }
+.form-upload-img .btn-file:hover{ text-decoration: none; }
+.form-upload-img .btn-file span{ display: block; height: 20px; line-height: 20px; line-height: 18px\9; color:#fff; border:1px solid #fff; background-color: #4194c1; transition: all .1s; -moz-transition: all .1s; -webkit-transition: all .1s; -o-transition: all .1s;}
+.form-upload-img .btn-file:hover span{ background-color: #427fa0;}
+.form-upload-img .preview{ position: relative; width: 156px; height: 156px; margin-top: 18px; border: 1px solid #4194c1; background-color: #fff; }
+.form-upload-img .preview img{ display: none; position: absolute; left:0; top:0; }
+.form-img-groups {height: 162px;padding-top: 10px;}
+.form-img-groups li{float: left;margin-right: 24px;}
+.form-img-groups a, .form-img-groups a img{width: 156px; height: 156px;}
+.form-img-groups a{display: block;border: 1px solid #4194c1; padding: 2px;}
+.form-multi-ipt .ipt, .form-multi-ipt .sel{ float: left; margin-right: 6px; }
+.form-multi-ipt .last{ margin-right: 0; }
+.form-option{ margin-right: 282px; text-align: right; }
+.form-wrap-cap{ clear: both; width: 224px; height: 18px; line-height: 18px; padding-top: 4px; }
+.form-wrap-cap .cap-left{ float: left; }
+.form-wrap-cap .cap-right{ float: right; }
+.form-action{ height: 36px; padding: 40px 0; margin-left: 286px; }
+.form-action .glb-btn{ float: left; width: 162px; }
+.form-action .reset-btn{ float: left; margin: 0 20px; font-size: 12px; line-height: 38px; *line-height: 42px; }
+
+/* 表单提示信息样式 */
+.form-tips { position: relative; font-size: 12px; }
+.form-ui-tips{ position: absolute; left:6px; top:0px; padding:7px 14px 6px 8px; line-height:18px; white-space: nowrap; border-radius: 2px; border: 1px solid #c2c8c8; }
+.form-ui-tips .drt, .form-ui-tips .tip{ background: url(../images/i.png) no-repeat; }
+.form-ui-tips .drt{ position: absolute; width: 7px; height: 10px; left:-6px; top:10px; }
+.form-ui-tips .tip{ height: 18px; padding-left: 20px; color:#666; background-position: -16px 0; }
+.form-tips-ta .form-ui-tips{ top:54px; }
+.form-tips-focus .form-ui-tips{ border-color:#c2c8c8; background-color: #f9f9f9; }
+.form-tips-focus .drt{ background-position: 0 0; }
+.form-tips-focus .tip{ background-position: -16px 0; }
+.form-tips-error .form-ui-tips{ border-color: red; background-color: #fff5f5; }
+.form-tips-error .drt{ background-position: 0 -15px; }
+.form-tips-error .tip{ color:red; background-position: -16px -21px; }
+.form-tips-valid .form-ui-tips{ left:0; padding-top: 8px; padding-left: 0; border: none; }
+.form-tips-valid .drt{ display: none; }
+.form-tips-valid .tip{ color:#f9f9f9; background-position: -16px -42px; }
+.form-tips-await .form-ui-tips{ padding-top: 8px; padding-left: 0; border: none; }
+.form-tips-await .drt{ display: none; }
+.form-tips-await .tip{ color:#f9f9f9; background: url(../images/form_loading.gif) no-repeat; }
+
+.form-item .form-ele-focus, .form-ele-focus:hover{ border-color: #0077ff; box-shadow: 0 0 5px #8cddff; -webkit-box-shadow: 0 0 5px #8cddff; }
+.form-item .form-ele-error, .form-ele-error:hover{ border-color: #ff0000; }
+.form-item .form-ele-valid, .form-ele-valid:hover{ border-color: #a0cd8b; }
+.form-item .form-ele-await, .form-ele-await:hover{ border-color: #ccc; }
+
+/* 表单Tab选项卡 */
+.form-tab{ width: 790px; margin: 0 auto; border: 1px solid #ddd; }
+.form-tab-hd{ border-bottom: 1px solid #dfdfdf; }
+.form-tab-hd li{ float: left; width: 395px; }
+.form-tab-hd a{ position: relative; display: block; height: 48px; text-align: center; line-height: 50px; background:-webkit-gradient(linear,left top,left bottom,from(#f9f9f9),to(#ededed)); background:-moz-linear-gradient(top,#f9f9f9,#ededed); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#ededed'); background:-o-linear-gradient(top,#f9f9f9,#ededed); background:-ms-linear-gradient(top,#f9f9f9 0,#ededed 100%); background:linear-gradient(top,#f9f9f9,#ededed); }
+.form-tab-hd a:hover{ text-decoration: none; }
+.form-tab-hd a em{ position: absolute; bottom:-16px; left:190px; display: block; width: 0; height: 0; border:8px solid transparent; }
+.form-tab-hd span{ font-size: 18px; }
+.form-tab-hd span:before{ margin-right: 10px; font-size: 24px; }
+.form-tab-hd .tab-item-a em{ border-top-color: #fb9a3d; }
+.form-tab-hd .tab-item-b em{ border-top-color: #2666a6; }
+.form-tab-hd .current a{ color:#fff; }
+.form-tab-hd .current .tab-item-a{ background:-webkit-gradient(linear,left top,left bottom,from(#ffb948),to(#fb9a3d)); background:-moz-linear-gradient(top,#ffb948,#fb9a3d); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffb948', endColorstr='#fb9a3d'); background:-o-linear-gradient(top,#ffb948,#fb9a3d); background:-ms-linear-gradient(top,#ffb948 0,#fb9a3d 100%); background:linear-gradient(top,#ffb948,#fb9a3d); }
+.form-tab-hd .current .tab-item-b{ background:-webkit-gradient(linear,left top,left bottom,from(#2c72b6),to(#2666a6)); background:-moz-linear-gradient(top,#2c72b6,#2666a6); filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#2c72b6', endColorstr='#2666a6'); background:-o-linear-gradient(top,#2c72b6,#2666a6); background:-ms-linear-gradient(top,#2c72b6 0,#2666a6 100%); background:linear-gradient(top,#2c72b6,#2666a6); }
+.form-tab-bd{ padding: 68px 0 20px 66px; }
+.form-tab-bd .form-label{ width: 190px; }
+.form-tab-bd .ipt{ width: 220px; }
+.form-tab-bd .ipt-code{ width: 60px; }
+.form-tab-bd .form-action{ margin-left: 280px; }
+
+/* 左右结构表单样式 */
+.col-main .form-bd{ width: 654px; }
+.col-main .form-label{ width: 184px; }
+.col-main .form-action{ margin-left: 262px; }
+.col-main .submit-btn{ width: 110px; }
+.col-main .ipt{ width: 220px; }
+.col-main .ipt-code{ width: 62px; }
+.col-main .items-group-box{ padding: 20px 22px; }
+
+/* 右侧结构复杂表单样式 */
+.col-main .form-col-r {width: 740px;padding-top: 30px;}
+.col-main .form-col-r .form-label{width: 150px;}
+.col-main .form-col-r .ipt{width: 188px;}
+
+
+/* 非紧凑型(交易等)表单样式 */
+.form-bd-trade .form-entity{ max-width: 564px; }
+.form-bd-trade .form-action{ padding: 30px 0; }
+
+/* 无表单样式(交易确认页) */
+.form-bd-confirm{width: 700px;padding-top: 40px;}
+.form-bd-confirm .form-label{ width: 268px; }
+.form-bd-confirm .form-item{padding-bottom: 6px;}
+.form-bd-confirm .form-action{ padding: 20px 0 30px; }
+/*--------------------------- 表单样式 ---------------------------*/
+
+

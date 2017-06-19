@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lanqiao.pay.mapper.EnterpriseUnitMapper">
+	<!-- 根据id得到企业的类型 -->
+	<select id="getEnterpriseUnitById" resultMap="getEnterpriseUnitByIdMap">
+		SELECT * FROM enterprise_unit WHERE id=#{id}
+	</select>
+	<resultMap type="EnterpriseUnit" id="getEnterpriseUnitByIdMap">
+		<id property="id" column="id"/>
+		<result property="type" column="type"/>
+		<result property="businessLicense" column="business_license"/>
+		<result property="allInOneLicencse" column="all_in_one_licencse"/>
+	</resultMap>
+	
+	<insert id="addEnterpriseUnit" parameterType="EnterpriseUnit" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO enterprise_unit (id,type,business_license,all_in_one_license)
+		VALUES(#{id},#{type},#{businessLicense,jdbcType=VARCHAR},#{allInOneLicense,jdbcType=VARCHAR})
+	</insert>
+</mapper>

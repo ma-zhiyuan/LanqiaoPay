@@ -1,0 +1,67 @@
+1.在创建国际化资源文件的时候,编码必须为ISO-8859-1
+2.如何判断一个checkbox是否被选中?
+	if($(":checkbox").get(0).checked==true){
+					alert(1);
+	}
+3.在企业级用户最后的插入过程中,需要验证邮箱和电话的唯一性,如果不符合那么就抛异常.此时需要实现串行化
+4.在做regist_b页面的级联属性的时候,modelAttribute是enterpriseUser,那path就不要在用enterpriseUser...开头了,直接
+enterprise.enterpriseUnit.type这种就好了,在关联form:radionButton的时候,checked='checked'才是对的
+5.mySQL显示当天日期CURDATE()
+6.mysql日期加减的表示
+		设今天是2016年08月01日。
+		
+		date_sub('2016-08-01',interval 1 day) 表示 2016-07-31
+		date_sub('2016-08-01',interval 0 day) 表示 2016-08-01
+		date_sub('2016-08-01',interval -1 day) 表示 2016-08-02
+		
+		date_sub(curdate(),interval 1 day) 表示 2016-07-31
+		date_sub(curdate(),interval -1 day) 2016-08-02
+		date_sub(curdate(),interval 1 month) 表示 2016-07-01
+		date_sub(curdate(),interval -1 month) 表示 2016-09-01
+		date_sub(curdate(),interval 1 year) 表示 2015-08-01
+		date_sub(curdate(),interval -1 year) 表示 2017-08-01
+7.	动态sql:
+	<sql> 和 <include>
+	<sql>用来封装SQL语句, <include>来调用
+	代码片段：<sql id="select">
+	SELECT * FROM `body_index`
+	
+	</sql>
+	<select id="find" resultType="*" resultMap="*">
+	        <include refid="select"/>
+	    </select>
+8.	js设置属性,this.setAttribute("class", "current");
+9.	jsp页面的js中（不是直接在js文件中）如何取得后台放入Request域中的值?var a = "${requestScope.xx}",不行,${xx.id} ok
+	var totalPage = ${tradePage.totalPage};ok,或者使用 var a = <%%> 或 "<%%>" 或搞个隐藏域
+10. JQuery获取选中的select的值
+	第一种方式
+	$('#testSelect option:selected').text();//选中的文本
+	$('#testSelect option:selected') .val();//选中的值
+	$("#testSelect ").get(0).selectedIndex;//索引
+	第二种方式
+	$("#tesetSelect").find("option:selected").text();//选中的文本
+	…….val();
+	…….get(0).selectedIndex;
+11.
+	"^\\d+$"　　//非负整数（正整数 + 0）
+	"^[0-9]*[1-9][0-9]*$"　　//正整数
+	"^((-\\d+)|(0+))$"　　//非正整数（负整数 + 0）
+	"^-[0-9]*[1-9][0-9]*$"　　//负整数
+	"^-?\\d+$"　　　　//整数
+	"^\\d+(\\.\\d+)?$"　　//非负浮点数（正浮点数 + 0）		
+	"^(([0-9]+\\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\\.[0-9]+)|([0-9]*[1-9][0-9]*))$"　　//正浮点数
+	"^((-\\d+(\\.\\d+)?)|(0+(\\.0+)?))$"　　//非正浮点数（负浮点数 + 0）
+	"^(-(([0-9]+\\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\\.[0-9]+)|([0-9]*[1-9][0-9]*)))$"　　//负浮点数
+	"^(-?\\d+)(\\.\\d+)?$"　　//浮点数
+	使用方法：使用的时候注意下,上面的是Java 中的正则,在js中符号就不同了,不过[]这个还是好用
+  	var r = /^\+?[1-9][0-9]*$/;　　//正整数
+  	String str = "123";
+  	boolean flag=r.test(str);
+	如果判断为正整数，则flag为true
+	/^[0-9]+([.][0-9]+)?$/ 	用来判断非负浮点数
+12. 
+	在mysql中，在进行数据库的增删改查时，经常会遇到这样的情况，在写条件语句where时，可能会同时有多个条件的“或”或者“与”,
+	但用法不当经常会达不到效果，经过尝试，本人发现一个where语句中同时出现条件的“与”或者“或的时候”，
+	要将多个OR用小括号括起来再和AND进行“与”，或者将多个AND用小括号括起来再与OR进行“或”。
+13.
+	在mysql中，查询某字段为空时，不可用 = null，而是 is null，不为空则是 is not null。

@@ -1,0 +1,59 @@
+/* Copyright © 2016 lanqiao.org. All rights reserved. Author:zbq 2016-09-18 */
+
+/*------------------------- 主页样式 -------------------------*/
+/* 导航样式 */
+.index-nav a span{ background: url(../images/sp_index.png) no-repeat; }
+.index-nav .index-nav-home span{ width: 34px; background-position: 0px -38px; }
+.index-nav .index-nav-shop span{ background-position: 0px -20px; }
+.index-nav .index-nav-safe span{ background-position: 0 0; }
+.index-nav .index-nav-loan span{ background-position: 0 -56px; }
+.index-nav .index-nav-cal span{ background-position: 0 -92px}
+.index-nav .index-nav-p2p span{ width: 34px; background-position: 0 -74px; }
+
+.index-login-pos .login-box{ top:64px; }
+.index-login-pos .logined-box{ top:76px; }
+.index-login-pos .login-wth-code{ top:34px; }
+
+/* banner样式 */
+#banner{ height: 400px; background: url(../images/index_bn.jpg) no-repeat center center; }
+
+/* 产品优势样式 */
+.legend{ height: 58px; margin-top: 60px; }
+.legend .ico, .legend .txt h3{ background: url(../images/sp_index.png) no-repeat; }
+.legend .ico{ float: left; width:68px; height: 58px; }
+.legend .txt{ float: left; margin-left: 6px; }
+.legend .txt h3{ height: 18px; margin-top: 6px; }
+.legend .txt p{ padding-left: 1px; line-height: 30px; font-size: 14px; color:#a0a0a0; }
+.legend li{ float: left; height: 58px; margin-right: 26px; }
+.legend li.last{ margin-right: 0; }
+.legend a:hover{ text-decoration: underline; }
+.lg-contrl .ico{ background-position: -168px -66px; }
+.lg-contrl .txt h3{ width: 72px; background-position:0px -230px; }
+.lg-online .ico{ width:78px; background-position: -168px -209px; }
+.lg-online .txt h3{ width: 68px; background-position: 0px -170px; }
+.lg-payall .ico{ background-position: -168px 0px; }
+.lg-payall .txt h3{ width: 102px; background-position: 0px -110px; ; }
+.lg-newest .ico{ width: 60px; background-position: -168px -135px; }
+.lg-newest .txt h3{ width: 144px; background-position: 0px -130px; ; }
+
+/* 产品说明样式 */
+.caption{ margin: 40px 0 60px; padding-top: 40px; border-top: 4px solid #eaeaea; }
+.caption a{ color:#8c8c8c; }
+.caption a:hover{ color:#00A7EE; text-decoration: underline; }
+.caption li{ float: left; width: 300px; margin-left:40px; }
+.caption .iconfont{ float: left; font-size: 48px; line-height: 60px; color:#555; }
+.caption .txt{ float: left; margin-left: 16px; *margin-left: 12px; }
+.caption .txt h3{ height: 18px; margin-top: 10px; background: url(../images/sp_index.png) no-repeat; }
+.caption .txt p{ padding-left: 1px; line-height: 30px; font-size: 14px; }
+.caption .txt dl{ margin-top: 4px; padding-left: 2px; }
+.caption .items a{ margin-right: 8px; *margin-right: 6px; }
+.caption .news a{ font-size: 10px; }
+.cp-about .txt h3{ width: 91px; background-position: 0px -150px; }
+.cp-study .txt { margin-left: 12px; *margin-left: 8px; }
+.cp-study .txt h3{ width: 72px; background-position: 0px -190px; }
+.cp-notice .txt h3{ width: 36px; margin-top: 0; background-position:0px -210px; }
+/*------------------------- 主页样式 -------------------------*/
+
+
+
+

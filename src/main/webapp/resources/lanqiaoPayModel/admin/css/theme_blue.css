@@ -1,0 +1,49 @@
+/*
+ * 	color: rgba(0,162,230,0.8);
+	color: rgba(0,162,230,0.6);
+*/
+
+a{ color: rgba(0,162,230,0.8); }
+
+.glb-selector .option{color: rgba(0,162,230,0.8);}
+.glb-selector .on .option:before{color: rgba(0,162,230,0.8);}
+.form-text-link, .glb-result-success, .glb-text {color: rgba(0,162,230,0.8);}
+.glb-option .op-item {color: rgba(0,162,230,0.8);}
+
+.frame-menu-active a, .frame-menu-active a:hover{background-color: rgba(0,162,230,0.8);}
+.glb-btn-primary{background-color: rgba(0,162,230,0.8);}
+.glb-pagination li.current a{background-color: rgba(0,162,230,0.8);}
+.glb-topbar{background-color: rgba(0,162,230,0.8);}
+.glb-menu-items .menu-current a{background-color: rgba(0,162,230,0.8);}
+.glb-stepbar .step-current,.glb-stepline .step-current:before{background-color: rgba(0,162,230,0.8);}
+.glb-selector .on .option, .glb-selector .on:hover .option, .glb-selector-img .on .option:before{background-color: rgba(0,162,230,0.8);}
+.glb-option .op-active .op-item, .glb-option .op-item:hover,.glb-option .op-active .op-item .op-desc, .glb-option .op-item:hover .op-desc{background-color: rgba(0,162,230,0.8);}
+.glb-metro-body .form-body {background-color: rgba(0,162,230,0.8);}
+.form-ipt-group .ipt-icon:hover{background-color: rgba(0,162,230,0.8);}
+
+.glb-btn-primary{border-color: rgba(0,162,230,0.8);}
+.glb-tabs li.current{border-color: rgba(0,162,230,0.8);}
+.glb-pagination li.current a{border-color: rgba(0,162,230,0.8);}
+.glb-nav-hover{border-color: rgba(0,162,230,0.8);}
+.glb-menu-items .menu-current a{border-color: rgba(0,162,230,0.8);}
+.glb-selector dt, .form-item .glb-selector dd, .glb-selector .on:hover, .glb-selector .on .option, .glb-selector .on:hover .option{border-color: rgba(0,162,230,0.8);}
+.glb-stepbar .step-current:before, .glb-stepbar .step-current:after, .glb-stepline li:before, .glb-stepline li:after, .glb-stepline .step-current:before{border-color: rgba(0,162,230,0.8);}
+.glb-option .op-item, .glb-option .op-active .op-item, .glb-option .op-item:hover{border-color: rgba(0,162,230,0.8);}
+.glb-portrait{border-color: rgba(0,162,230,0.8);}
+
+a:hover{ color: rgba(0,162,230,0.6); }
+
+.glb-bottom a:hover{color: rgba(0,162,230,0.6);}
+.glb-stepline li:before, .glb-stepline .step-current .step-text {color: rgba(0,162,230,0.6);}
+.glb-option .op-item:hover{color: rgba(0,162,230,0.6);}
+
+.frame-logo .frame-logo-main{background-color: rgba(0,162,230,0.6);}
+.glb-selector dd:hover .option{background-color: rgba(0,162,230,0.6);}
+.glb-btn-primary:hover{background-color: rgba(0,162,230,0.6);}
+.glb-pagination a:hover{background-color: rgba(0,162,230,0.6);}
+.glb-topbar a:hover{background-color: rgba(0,162,230,0.6);}
+.glb-metro-body, .glb-metro-body .glb-header {background-color: rgba(0,162,230,0.6);}
+
+.glb-btn-primary:hover {border-color: rgba(0,162,230,0.6);}
+.glb-pagination a:hover {border-color: rgba(0,162,230,0.6);}
+.glb-selector dd:hover, .glb-selector dd:hover .option{border-color: rgba(0,162,230,0.6);}

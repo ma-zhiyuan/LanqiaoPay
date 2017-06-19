@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lanqiao.pay.mapper.LegalRepresentativeMapper">
+	<!-- 根据id得到法定代表人的信息 -->
+	<select id="getLegalRepresentativeById" resultMap="getLegalRepresentativeByIdMap">
+		SELECT * FROM legal_representative WHERE id=#{id} 
+	</select>
+	
+	<resultMap type="LegalRepresentative" id="getLegalRepresentativeByIdMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="homeLocation" column="home_location"/>
+		<result property="certificateType" column="certificate_type"/>
+		<result property="certificateNumber" column="certificate_number"/>
+		<result property="certificatePhotoPositive" column="certificate_photo_positive"/>
+		<result property="certificatePhotoReserse" column="certificate_photo_reserse"/>
+		<result property="certificateTerm" column="certificate_term"/>
+	</resultMap>
+	
+	<insert id="addLegalRepresentative" parameterType="LegalRepresentative" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO legal_representative(id,name,home_location,certificate_type,certificate_number,
+		certificate_photo_positive,certificate_photo_reserse,certificate_term)
+		VALUES(#{id},#{name},#{homeLocation,jdbcType=VARCHAR},#{certificateType},#{certificateNumber},
+		#{certificatePhotoPositive,jdbcType=VARCHAR},#{certificatePhotoReserse,jdbcType=VARCHAR},
+		#{certificateTerm})
+	</insert>
+</mapper>

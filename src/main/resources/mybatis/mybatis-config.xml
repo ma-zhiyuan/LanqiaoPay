@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE configuration  
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<!--使用jdbc的getGenerateKeys获取数据库自增主键 -->
+		<setting name="useGeneratedKeys" value="true" />
+		<!--使用别名替换列名 -->
+		<setting name="useColumnLabel" value="true" />
+		<!--开启驼峰命名转换 -->
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+		<!-- 全局启用或禁用延迟加载。 当禁用时，所有关联对象都会即时加载。 -->
+		<setting name="lazyLoadingEnabled" value="true" />
+		<!-- 这个配置使全局的映射器启用或禁用缓存 -->
+		<setting name="cacheEnabled" value="true" />
+		<!-- 按需加载 -->
+		<setting name="aggressiveLazyLoading" value="false" />
+		<!--指定 MyBatis 所用日志的具体实现，未指定时将自动查找。-->
+		<setting name="logImpl" value="LOG4J"/>  
+	</settings>
+
+</configuration>  

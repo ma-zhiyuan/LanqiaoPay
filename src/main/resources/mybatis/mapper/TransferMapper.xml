@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lanqiao.pay.mapper.TransferMapper">
+	<!-- <sql id="ini"> <choose></choose> </sql> -->
+
+	<!-- 企业余额宝与用户余额宝之间的转账 -->
+	<insert id="insertIntoTransferFromEnterToUserByYue"
+		parameterType="org.lanqiao.pay.base.entity.Transfer">
+		<selectKey keyProperty="id" order="AFTER" resultType="int">
+			SELECT LAST_INSERT_ID();
+		</selectKey>
+		insert into
+		transfer(from_user_id,from_enterprise_id,to_user_id,to_enterprise_id,from_bankcard_id,to_bankcard_id,money,time,state,transfer_name,transfer_description)
+		values
+		(null,#{fromEnterprise.id},#{toUser.id},null,null,null,#{money},#{time},#{state},#{transferName},#{transferDescription})
+	</insert>
+	<!-- 将生成的企业余额向用户银行卡转账记录插入到数据库中 -->
+	<insert id="insertIntoTransferFromEnterToUserByYhk"
+		parameterType="org.lanqiao.pay.base.entity.Transfer">
+		<selectKey keyProperty="id" order="AFTER" resultType="int">
+			SELECT LAST_INSERT_ID();
+		</selectKey>
+		insert into
+		transfer(from_user_id,from_enterprise_id,to_user_id,to_enterprise_id,from_bankcard_id,to_bankcard_id,money,time,state,transfer_name,transfer_description)
+		values
+		(null,#{fromEnterprise.id},#{toUser.id},null,null,#{toBankCard.id},#{money},#{time},#{state},#{transferName},#{transferDescription})
+	</insert>
+	<!-- 王增:根据分页条件查询转账条数 -->
+	<select id="getCountsByPage" parameterType="org.lanqiao.pay.base.bean.TradePage"
+		resultType="int">
+		SELECT
+		<choose>
+			<when test="initiator == 0">
+				COUNT(id)
+			</when>
+			<when test="initiator == 1">
+				COUNT(from_user_id)
+			</when>
+			<when test="initiator == 2">
+				COUNT(from_enterprise_id)
+			</when>
+			<otherwise>COUNT(id)</otherwise>
+		</choose>
+		FROM transfer
+		WHERE 1 = 1
+		
+		<!-- 时间期限类型和时间范围不能同时生效,因此当没有时间范围的时候就来使时间期限类型生效, -->
+		<if test="begainTradeRange == null or endeTradeRange == null">
+			<choose>
+				<when test="tradeDateRangeType == 0">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</when>
+				<when test="tradeDateRangeType == 1">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 7 day))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 2">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 3">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 3 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 4">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 year))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<otherwise><!-- 默认今天 -->
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</otherwise>
+			</choose>
+		</if>
+	
+		<if test="tradeNumber != null">
+				AND id = #{tradeNumber}
+		</if>
+		<if test="tradeName != null and tradeName != ''">
+			<bind name="pattrn" value="'%'+_parameter.tradeName+'%'"/>
+				AND transfer_name = #{pattrn}
+		</if>
+		<!-- 当时间范围存在的话,上面的时间期限条件不会被生效. -->
+		<if test="begainTradeRange != null and endeTradeRange != null">
+			<![CDATA[AND unix_timestamp(time) > unix_timestamp(#{begainTradeRange})
+			AND unix_timestamp(time) <= unix_timestamp(#{endeTradeRange})]]>
+		</if>
+	
+		<if test="tradeState != -1">
+			AND state = #{tradeState}
+		</if>
+		
+		<choose>
+			<when test="begainMoneyRange==null and endMoneyRange!=null">
+				<![CDATA[AND money <= #{endMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange==null">
+				<![CDATA[AND money > #{begainMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange!=null">
+				<![CDATA[AND money > #{begainMoneyRange} AND money <= #{endMoneyRange}]]>
+			</when>
+		</choose>
+	</select>
+	<!-- 王增:根据用户交易分页bean得到用户的转账记录; -->
+	<select id="getTransfersByUserTradePage" parameterType="org.lanqiao.pay.base.bean.TradePage" 
+				resultMap="baseMap">
+		SELECT 
+			*
+		FROM transfer
+		WHERE from_user_id = #{id}
+		<!-- 时间期限类型和时间范围不能同时生效,因此当没有时间范围的时候就来使时间期限类型生效, -->
+		<if test="begainTradeRange == null or endeTradeRange == null">
+			<choose>
+				<when test="tradeDateRangeType == 0">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</when>
+				<when test="tradeDateRangeType == 1">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 7 day))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 2">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 3">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 3 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 4">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 year))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<otherwise><!-- 默认今天 -->
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</otherwise>
+			</choose>
+		</if>
+	
+		<if test="tradeNumber != null">
+				AND id = #{tradeNumber}
+		</if>
+		<if test="tradeName != null and tradeName != ''">
+			<bind name="pattrn" value="'%'+_parameter.tradeName+'%'"/>
+				AND transfer_name = #{pattrn}
+		</if>
+		<!-- 当时间范围存在的话,上面的时间期限条件不会被生效. -->
+		<if test="begainTradeRange != null and endeTradeRange != null">
+			<![CDATA[AND unix_timestamp(time) > unix_timestamp(#{begainTradeRange})
+			AND unix_timestamp(time) <= unix_timestamp(#{endeTradeRange})]]>
+		</if>
+		<if test="tradeState != -1">
+			AND state = #{tradeState}
+		</if>
+		
+		<choose>
+			<when test="begainMoneyRange==null and endMoneyRange!=null">
+				<![CDATA[AND money <= #{endMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange==null">
+				<![CDATA[AND money > #{begainMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange!=null">
+				<![CDATA[AND money > #{begainMoneyRange} AND money <= #{endMoneyRange}]]>
+			</when>
+		</choose>
+		ORDER BY time limit #{begin},#{pageSize}
+	</select>
+	
+	
+	
+	<!-- 王增:得到企业用户的转账交易记录数 -->
+	<select id="getEnterpriseUserTransferCount" parameterType="org.lanqiao.pay.base.bean.UserTradePage" resultType="int">
+		SELECT 
+				COUNT(from_enterprise_id)
+		FROM transfer
+		WHERE from_enterprise_id = #{id}
+		
+		<!-- 时间期限类型和时间范围不能同时生效,因此当没有时间范围的时候就来使时间期限类型生效, -->
+		<if test="begainTradeRange == null or endeTradeRange == null">
+			<choose>
+				<when test="tradeDateRangeType == 0">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</when>
+				<when test="tradeDateRangeType == 1">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 7 day))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 2">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 3">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 3 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 4">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 year))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<otherwise><!-- 默认今天 -->
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</otherwise>
+			</choose>
+		</if>
+	
+		<if test="tradeNumber != null">
+				AND id = #{tradeNumber}
+		</if>
+		<if test="tradeName != null and tradeName != ''">
+			<bind name="pattrn" value="'%'+_parameter.tradeName+'%'"/>
+				AND transfer_name = #{pattrn}
+		</if>
+		<!-- 当时间范围存在的话,上面的时间期限条件不会被生效. -->
+		<if test="begainTradeRange != null and endeTradeRange != null">
+			<![CDATA[AND unix_timestamp(time) > unix_timestamp(#{begainTradeRange})
+			AND unix_timestamp(time) <= unix_timestamp(#{endeTradeRange})]]>
+		</if>
+	
+		<if test="tradeState != -1">
+			AND state = #{tradeState}
+		</if>
+		
+		<choose>
+			<when test="begainMoneyRange==null and endMoneyRange!=null">
+				<![CDATA[AND money <= #{endMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange==null">
+				<![CDATA[AND money > #{begainMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange!=null">
+				<![CDATA[AND money > #{begainMoneyRange} AND money <= #{endMoneyRange}]]>
+			</when>
+		</choose>
+	</select>
+	<!-- 通过企业的id获取企业的转出记录    王向宇-->
+	<select id="getEnterprisePayItems" parameterType="Integer" resultMap="baseMap">
+		select * from transfer where from_enterprise_id=#{enterpriseId}
+	</select>
+	<!-- 王增:得到企业用户的转账记录; -->
+	<select id="getTransfersForEnterpriseUserByUserTradePage" parameterType="org.lanqiao.pay.base.bean.TradePage" 
+				resultMap="baseMap">
+		SELECT 
+			*
+		FROM transfer
+		WHERE from_enterprise_id = #{id}
+		<!-- 时间期限类型和时间范围不能同时生效,因此当没有时间范围的时候就来使时间期限类型生效, -->
+		<if test="begainTradeRange == null or endeTradeRange == null">
+			<choose>
+				<when test="tradeDateRangeType == 0">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</when>
+				<when test="tradeDateRangeType == 1">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 7 day))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 2">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 3">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 3 month))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<when test="tradeDateRangeType == 4">
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(date_sub(CURDATE(),interval 1 year))
+					AND unix_timestamp(time) < unix_timestamp(date_sub(CURDATE(),interval 0 day))]]>
+				</when>
+				<otherwise><!-- 默认今天 -->
+					<![CDATA[AND unix_timestamp(time) > unix_timestamp(CURDATE())]]>
+				</otherwise>
+			</choose>
+		</if>
+	
+		<if test="tradeNumber != null">
+				AND id = #{tradeNumber}
+		</if>
+		<if test="tradeName != null and tradeName != ''">
+			<bind name="pattrn" value="'%'+_parameter.tradeName+'%'"/>
+				AND transfer_name = #{pattrn}
+		</if>
+		<!-- 当时间范围存在的话,上面的时间期限条件不会被生效. -->
+		<if test="begainTradeRange != null and endeTradeRange != null">
+			<![CDATA[AND unix_timestamp(time) > unix_timestamp(#{begainTradeRange})
+			AND unix_timestamp(time) <= unix_timestamp(#{endeTradeRange})]]>
+		</if>
+		<if test="tradeState != -1">
+			AND state = #{tradeState}
+		</if>
+		
+		<choose>
+			<when test="begainMoneyRange==null and endMoneyRange!=null">
+				<![CDATA[AND money <= #{endMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange==null">
+				<![CDATA[AND money > #{begainMoneyRange}]]>
+			</when>
+			<when test="begainMoneyRange!=null and endMoneyRange!=null">
+				<![CDATA[AND money > #{begainMoneyRange} AND money <= #{endMoneyRange}]]>
+			</when>
+		</choose>
+		ORDER BY time limit #{begin},#{pageSize}
+	</select>
+	
+	<!-- 根据转账ID获取一条转账记录  何璐 -->
+	<select id="getTransferById" parameterType="Integer" resultMap="baseMap">
+	    select * from transfer where id=#{id}
+	</select>
+	<!-- 根据ID修改转账状态    董正健 -->
+	<update id="updateState" parameterType="int">
+		update transfer set state = 1 where id = #{id}
+	</update>
+	<!-- 客服分页查询转账 -->
+	<select id="getHavaFoundTransferList" parameterType="org.lanqiao.pay.base.bean.TransferCreteria" resultMap="baseMap">
+	    select * from transfer
+	    where  state = #{state} 
+	    <if test="transferType=='etp'">
+	        and from_enterprise_id is not null and to_user_id is not null
+	    </if>
+	    <if test="transferType=='ptp'">
+	        and from_user_id is not null and to_user_id is not null
+	    </if>
+	    <if test="transferType=='pte'">
+	        and from_user_id is not null and to_enterprise_id is not null
+	    </if>
+	    <if test="transferType=='ete'">
+	        and from_enterprise_id is not null and to_enterprise_id is not null
+	    </if>
+	    order by ${order}
+  		limit #{pageNoFrom},#{pageSize}
+	</select>
+	<!-- 客服分页查询转账总数 -->
+	<select id="getHavaFoundTransferListCount" parameterType="org.lanqiao.pay.base.bean.TransferCreteria" resultType="Integer">
+	    select count(id) from transfer
+	    where  state = #{state} 
+	    <if test="transferType=='etp'">
+	        and from_enterprise_id is not null and to_user_id is not null
+	    </if>
+	    <if test="transferType=='ptp'">
+	        and from_user_id is not null and to_user_id is not null
+	    </if>
+	    <if test="transferType=='pte'">
+	        and from_user_id is not null and to_enterprise_id is not null
+	    </if>
+	    <if test="transferType=='ete'">
+	        and from_enterprise_id is not null and to_enterprise_id is not null
+	    </if>
+	</select>
+		<resultMap type="Transfer" id="baseMap">
+		<id property="id" column="id" />
+		<result property="money" column="money" />
+		<result property="time" column="time" />
+		<result property="transferName" column="transfer_name" />
+		<result property="transferDescription" column="transfer_description" />
+		<result property="state" column="state" />
+		<association property="fromUser" column="from_user_id"
+			select="org.lanqiao.pay.mapper.UserMapper.getUserById"></association>
+		<association property="toUser" column="to_user_id"
+			select="org.lanqiao.pay.mapper.UserMapper.getUserById"></association>
+		<association property="fromEnterprise" column="from_enterprise_id"
+			select="org.lanqiao.pay.mapper.EnterpriseMapper.selectEnterpriseIDandName"></association>
+		<association property="toEnterprise" column="to_enterprise_id"
+			select="org.lanqiao.pay.mapper.EnterpriseMapper.selectEnterpriseIDandName"></association>
+		<association property="fromBankCard" column="from_bankcard_id"
+			select="org.lanqiao.pay.mapper.BankCardMapper.getBanKParities"></association>
+		<association property="toBankCard" column="to_bankcard_id"
+			select="org.lanqiao.pay.mapper.BankCardMapper.getBanKParities"></association>
+	</resultMap>
+	<select id="getTranNumber" parameterType="TimeBean" resultType="int">
+		select count(*) from transfer where   time between
+		#{beginTime} and #{endTime}
+	</select>
+	<select id="getTranNumberAll" parameterType="TimeBean" resultType="int">
+		select count(*) from transfer 
+	</select>
+</mapper>
