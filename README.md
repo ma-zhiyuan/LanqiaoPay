@@ -36,4 +36,4 @@ _SVN
 + 数据库服务器：腾讯云Mysql数据库实例
 ****
 ### 七、项目基本信息
-###### 项目访问地址： [http://ifma.me/lanqiaopay(http://123.206.71.118/lanqiaobank)
+###### 项目访问地址： http://ifma.me/LanqiaoPay
